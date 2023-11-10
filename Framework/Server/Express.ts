@@ -4,6 +4,7 @@ import http from 'http';
 import https from 'https';
 import Router from '@framework/Routing/Router';
 import compression from 'compression';
+import axios from 'axios';
 
 export type Method = keyof typeof MethodEnum;
 export enum MethodEnum {
@@ -17,11 +18,17 @@ export enum MethodEnum {
     head = "head",
 }
 
+export type Middleware = string | ((req: Request, res: Response, next: NextFunction) => void | Response);
+
 class Express {
+
     protected port: number = 3000;
     protected ip: string = '0.0.0.0';
-    protected server: http.Server | https.Server | undefined;
+
+    public server: http.Server | https.Server | undefined;
     public app: Application;
+    protected isHttps: boolean = false;
+
     protected routes: {
         method: Method,
         path: string,
@@ -37,7 +44,7 @@ class Express {
         //         origin: '*',
         //     })
         // );
-        this.app.use((req,res,next) => this.runMiddleWares(req, res, next, require(app_path('Http/Kernel.ts')).default.middleware));
+        this.applyMiddleWares(require(app_path('Http/Kernel.ts')).default.middleware);
 
         const shouldCompress = (req, res) => {
             if (req.headers['x-no-compression']) {
@@ -48,17 +55,10 @@ class Express {
         this.app.use(compression({ filter: shouldCompress }));
     
         this.app.enable('trust proxy');
-        // this.app.use(changeLanguage);
         this.app.use(_express.json());
         this.app.use(_express.urlencoded({ extended: true }))
         this.app.set('view engine', 'ejs');
 
-        // this.app.use((req,res,next) => this.runMiddleWares(req, res, next, [
-        //     app_path('Http/Middleware/Cors.ts'),
-        // ]));
-
-
-        
     }
 
     make_HttpServer() {
@@ -75,6 +75,8 @@ class Express {
         };
 
         this.server = https.createServer(credentials, this.app);
+
+        this.isHttps = true;
         return this;
     }
 
@@ -161,39 +163,116 @@ class Express {
         return this;
     }
 
-    runMiddleWares(req, res, next, middlewares: string[] | ((req: Request, res: Response, next: NextFunction) => void)[]) {
-        
+    public testRoutes() { 
+        for (const route of this.listRoutes()) {
+            const url = `${this.isHttps ? 'https' : 'http'}://localhost:${this.port}${route.path}`;
+
+            axios[route.method as keyof Method](url.replace(':id','1'))
+                .then(() => {
+                    console.log(`route: ${route.path} is working`);
+                }).catch(({request}) => {
+                    if(request.res?.statusCode == 401) {
+                         console.log(`route: ${route.path} is working`);
+                    } else {
+                        console.log(`route: ${route.path} is not working`);
+                    }
+                })
+        }
+    }
+
+    public showRoutes() {
+        // console.log(express.app._router.stack.filter((r: any) => r.name == 'router').map((r: any) => r.handle));
+
+        console.table(this.listRoutes());
+    }
+
+    runMiddleWares(req: Request, res: Response, next: NextFunction, middlewares: Middleware[]) {
+        if(!middlewares.length) return next();
+
         middlewares.forEach((middleware) => {
             if(typeof middleware === 'function') {
-                middleware(req, res, next);
+                const response = middleware(req, res, next);
+                if(!response) {
+                    next();
+                }
             } else {
-                require(middleware).default(req, res, next);
+                const response = require(middleware).default(req, res, next);
+                if(!response) {
+                    next();
+                }
+            }
+        });
+    }
+    
+    applyMiddleWares(middlewares: Middleware[]) {
+        middlewares.forEach((middleware: Middleware) => {
+            if(typeof middleware === 'function') {
+                middleware
+                this.app.use((req: Request, res: Response, next: NextFunction) =>{
+                    const response = middleware(req, res, next);
+                    if(!response) {
+                        next();
+                    }
+                });
+            } else {
+                this.app.use((req: Request, res: Response, next: NextFunction) => {
+                    const response = require(middleware).default(req, res, next);
+                    if(!response) {
+                        next();
+                    }
+                });
             }
         });
 
-        next();
+        return this;
     }
 
     setId(req: Request, res: Response, next: NextFunction) {
         req.id = req.params?.id ?? req.body?.id ?? req.query?.id ?? null;
 
-        console.log(req.id);
-
-        return next();
+        next();
     }
 
-    addRoute(method: string, path: string, callback: (req: any, res: any) => void) {
-        this.app[method](path, callback);
+    addRoute(method: Method, path: string, middlewares: Middleware[], callback: (req: any, res: any) => void) {
+        this.app[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, middlewares), callback);
         return this;
     }
 
-    addGroupRoute(exressRouter, method: string, path: string, callback: (req: any, res: any) => void) {
-        exressRouter[method](path, callback);
+    addGroupRoute(exressRouter: Router, method: Method, path: string, middlewares: Middleware[], callback: (req: any, res: any) => void) {
+        exressRouter[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, middlewares), callback);
         return this;
     }
 
-    listRoutes() {
+    public listRoutes() {
         return this.routes;
+    }
+    
+    static getLanguage(req: Request) {
+        if (
+            !req.acceptsLanguages() 
+            || !req.acceptsLanguages()[0] 
+            || req.acceptsLanguages()[0] == '*' 
+            || req.acceptsLanguages()[0] == 'undefined'
+        ) {
+            return 'en';
+        }
+        return req.acceptsLanguages()[0].split('-')[0] ?? 'en';
+    };
+
+    static getCountry(req: Request){
+        if (
+            !req.acceptsLanguages() 
+            || !req.acceptsLanguages()[0] 
+            || req.acceptsLanguages()[0] == '*' 
+            || req.acceptsLanguages()[0] == 'undefined'
+        ) {
+            return 'US';
+        }
+        return req.acceptsLanguages()[0].split('-')[1] ?? 'US';
+    }
+
+    static auth() {
+
     }
 
 }

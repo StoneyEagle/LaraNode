@@ -2,6 +2,7 @@ import Router from '@framework/Routing/Router';
 import BaseController from '@framework/Routing/Controller';
 import { NextFunction, Request, Response } from 'express';
 import { Method, MethodEnum } from '@framework/Server/Express';
+import { Worker } from 'worker_threads';
 
 type MyResponse = {
     json: (value: any, headers?: { [key: string]: string | number; }) => void | Response | Response<any, Record<string, any>>;
@@ -35,39 +36,90 @@ class Route extends Router {
         Route.instance = this;
     }
 
-    getCallback(req: Request, res: Response) {
+    async getCallback(req: Request, res: Response) {
         const controller = this._action[0] ?? this._action;
-        const action = this._action[1];
 
         if (typeof controller === 'function') {
-
-            return controller({ req, res, response: Route.response(res) });
+            const response = await this.runCallback(controller);
+            this.sendResponse(res, response);
 
         } else if (typeof controller === 'string') {
-
-            const exec = new (require(controller).default)(req, res);
-            // find model from this request and set it to the controller
-                        
-            return exec[action](req.params?.id ?? req.body?.id ?? req.query?.id ?? null);
+            const action = this._action[1];
+            const response = await this.runClass(controller, action);
+            this.sendResponse(res, response);
         }
     }
+
+    sendResponse(res: Response, response: { type: string; data: any; headers: any; }){
+        
+        if (response.type === 'view') {
+            if (response.data.includes('<') && response.data.includes('</')) {
+                return res.header(response.headers).send(response.data);
+            }
+            return res.render(response.data);
+        } else if (response.type === 'redirect') {
+            return res.redirect(response.data);
+        } else if (response.type === 'json') {
+            return res.json(response.data);
+        } else if (response.type === 'send') {
+            return res.send(response.data);
+        } else if (response.type === 'status') {
+            return res.sendStatus(response.data);
+        }
+    }
+
+    runClass(controller: string, action: string): Promise<{ type: string; data: any; headers: any; }> {
+        return new Promise((resolve, reject) => {
+            const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
+                workerData: {
+                    controller: controller,
+                    action: action,
+                },
+                execArgv: ["--require", "ts-node/register"],
+            });
+            worker.once('message', (message) => {
+                return resolve(message);
+            });
+            worker.once('error', (error) => {
+                return reject(error);
+            });
+        });
+    }
+    
+    runCallback(callback: () => void): Promise<{ type: string; data: any; headers: any; }> {
+        return new Promise((resolve, reject) => {
+            const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
+                workerData: {
+                    callback: callback.toString(),
+                },
+                execArgv: ["--require", "ts-node/register"],
+            });
+            worker.once('message', (message) => {
+                return resolve(message);
+            });
+            worker.once('error', (error) => {
+                return reject(error);
+            });
+        });
+    }
+
 
     public static response(res: Response): MyResponse {
         return {
             json: (value: any, headers: { [key: string]: string | number; } = {}) => {
-                return res.json(value);
+                return res.header(headers).json(value);
             },
             send: (value: any, headers: { [key: string]: string | number; } = {}) => {
-                return res.send(value);
+                return res.header(headers).send(value);
             },
             view: (value: any, headers: { [key: string]: string | number; } = {}) => {
                 if (value.includes('<') && value.includes('</')) {
-                    return res.send(value);
+                    return res.header(headers).send(value);
                 }
-                return res.render(value);
+                return res.header(headers).render(value);
             },
             redirect: (value: any, headers: { [key: string]: string | number; } = {}) => {
-                return res.redirect(value);
+                return res.header(headers).redirect(value);
             },
             status: (value: number) => {
                 res.status(value);

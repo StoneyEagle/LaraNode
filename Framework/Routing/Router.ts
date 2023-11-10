@@ -1,5 +1,8 @@
+import { Middleware } from "@framework/Server/Express";
 import Route from "./Route";
 import { Response } from 'express';
+import { existsSync } from "fs";
+import { resolve } from "path";
 
 export interface RouteGroupAttributes {
     prefix?: string;
@@ -31,7 +34,7 @@ class Router {
     constructor() {
     }
 
-    getMiddleware() {
+    getMiddleware(): Middleware[] {
         return this?._middlewares ?? Router.instance?._middlewares;
     }
 
@@ -60,17 +63,29 @@ class Router {
 
         if (Array.isArray(name)) {
             name.forEach((item) => {
-                files.push(app_path(`Http/Middleware/${item}`));
+                if(this.hasFile(app_path(`Http/Middleware/${item}`))) {
+                    files.push(app_path(`Http/Middleware/${item}`));
+                } else {
+                    files.push(resolve(__dirname, '..', 'Middleware', item.toTitleCase()));
+                }
             });
         } else {
             name.split(',').forEach((item) => {
-                files.push(app_path(`Http/Middleware/${item}`));
+                if(this.hasFile(app_path(`Http/Middleware/${item}`))) {
+                    files.push(app_path(`Http/Middleware/${item}`));
+                } else {
+                    files.push(resolve(__dirname, '..', 'Middleware', item.toTitleCase()));
+                }
             });
         }
 
         this._middlewares.push(...files);
 
         return this;
+    }
+
+    hasFile(file: string) {
+        return existsSync(app_path(`${file}`) + '.ts') || existsSync(app_path(`${file}`) + '.js');
     }
 
     public static group(arg0: { prefix?: string; middleware?: string[]; namespace?: string; }, arg1: (arg0) => void) {
@@ -91,7 +106,7 @@ class Router {
             require(attributes).default;
         } else if (typeof attributes === 'object') {
             this._prefix += attributes.prefix.replace(/\/+/g, '/');
-            this._middlewares = attributes.middlewares;
+            this.middleware(attributes.middleware ?? []);
             this._domain = attributes.domain;
 
             routes();

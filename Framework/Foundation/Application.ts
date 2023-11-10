@@ -1,4 +1,6 @@
 import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
+import AuthServiceProvider from "@framework/Providers/AuthServiceProvider";
+import LanguageServiceProvider from "@framework/Providers/LanguageServiceProvider";
 
 class Application {
     instance: any;
@@ -15,8 +17,10 @@ class Application {
 }
 
 class _Application {
+    AuthServiceProvider = <AuthServiceProvider>{};
+    LanguageServiceProvider = <LanguageServiceProvider>{};
+    RouteServiceProvider = <RouteServiceProvider>{};
 
-    router: RouteServiceProvider = new RouteServiceProvider();
 
     public constructor() {
         // console.log(base_path());
@@ -31,15 +35,19 @@ class _Application {
 
         // console.log(config('apiKeys'));
         // console.log(config('apiKeys.TMDB_API_KEY'));
+// 
+        (config('app.providers') as unknown as string[]).forEach((provider) => {
+            const Class = require(provider).default;
+            const instance = new Class();
 
-        this.init_router();
-    }
+            instance.register();
+            instance.boot();
 
-    init_router() {
-        this.router.register();
-        this.router.boot();
+            this[Class.name] = instance;
+        });
 
-        return this;
+        const app = this.RouteServiceProvider.express.app;
+
     }
 
     send() {

@@ -24,12 +24,12 @@ export class Controller extends BaseController {
         return Route.response(this.res).view(data, headers);
     }
 
-    private static getFilePath(): string {
+    protected static getFilePath(): string {
         const nodeModule = this.getNodeModule();
         return (nodeModule) ? nodeModule.filename : "";
     }
 
-    private static getNodeModule(): NodeModule | undefined {
+    protected static getNodeModule(): NodeModule | undefined {
         const nodeModule = Object.values(require.cache)
             .filter((chl) => chl?.children.includes(module))
             .filter((mn) => mn?.filename.includes(this.name))

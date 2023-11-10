@@ -1,19 +1,27 @@
 
 import ServiceProvider from '@framework/Providers/RouteServiceProvider';
 import Router from '@framework/Routing/Router';
+import Socket from '@framework/Server/Socket';
+import Express from '@framework/Server/Express';
+import { allowedOrigins } from '../Http/Middleware/Cors';
 
 class RouteServiceProvider extends ServiceProvider {
-    public constructor() {
+    public express: Express = <Express>{};
+
+    constructor() {
         super();
     }
 
     public static HOME = '/';
 
     public register(): void {
+        // console.log('RouteServiceProvider registered');
+        super.register();
     }
 
-    public boot(): void {
-        this.routes(function () {
+    public boot(): this {
+        // console.log('RouteServiceProvider booted');
+        this.express = this.registerRoutes(function () {
 
             Router.middleware('web')
                 .group(base_path('routes/web'));
@@ -21,7 +29,6 @@ class RouteServiceProvider extends ServiceProvider {
             Router.middleware('api')
                 .prefix('/api')
                 .group(base_path('routes/api'));
-
 
             Router.middleware(['api'])
                 .prefix('api/v1')
@@ -37,6 +44,23 @@ class RouteServiceProvider extends ServiceProvider {
                 .group(base_path('routes/api/v1/music'));
         });
 
+        const io = Socket.make();
+        io.makeServer(this.express.server, {
+            allowEIO3: true,
+            path: '/socket',
+            cors: {
+                // origin: '*',
+                origin: allowedOrigins,
+                credentials: true,
+                maxAge: 1000 * 60 * 60 * 30,
+                optionsSuccessStatus: 200,
+            },            
+        });
+
+        // this.express.testRoutes();
+        // this.express.showRoutes();      
+        
+        return this;
     }
 }
 
