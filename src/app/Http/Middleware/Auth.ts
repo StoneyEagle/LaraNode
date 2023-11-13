@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 
+const allowedUsers = [];
+globalThis.allowedUsers = allowedUsers;
+
 export default (req: Request, res: Response) => {
     if(!req.user) {
         return res.status(401).json({

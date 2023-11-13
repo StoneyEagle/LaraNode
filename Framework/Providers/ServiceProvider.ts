@@ -4,6 +4,8 @@ class ServiceProvider {
     providers: string[] = [];
     
     constructor() {
+        // this.register();
+        // this.boot();
     }
 
     public register(): void {
@@ -23,7 +25,7 @@ class ServiceProvider {
         return instance;
     }
     
-    merge(arg0: any[]) {
+    merge(arg0: string[]) {
         this.providers.push(...arg0);
 
         return this.providers;

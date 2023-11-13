@@ -1,8 +1,10 @@
-import UserController from "@/app/Http/Controllers/UserController";
+import ServerController from "@/app/Http/Controllers/ServerController";
 import Route from "@framework/Routing/Route";
 
 Route.get('/', function() {
-    return send('<h1>Hello Home</h1>');
+    return redirect('https://vue-dev.nomercy.tv');
 });
 
-Route.get('/about', [UserController.class, 'about']);
+Route.get('/routes', [ServerController.class, 'routes']);
+Route.get('/status', [ServerController.class, 'status']);
+

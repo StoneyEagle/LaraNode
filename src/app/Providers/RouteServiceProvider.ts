@@ -57,7 +57,7 @@ class RouteServiceProvider extends ServiceProvider {
             },            
         });
 
-        // this.express.testRoutes();
+        this.express.testRoutes();
         // this.express.showRoutes();      
         
         return this;

@@ -3,7 +3,6 @@ import Route from '@framework/Routing/Route';
 import { NextFunction, Request, Response } from 'express';
 
 export class Controller extends BaseController {
-    public static class: string = this.getFilePath();
     req: Request;
     res: Response;
     next: NextFunction;
@@ -20,7 +19,7 @@ export class Controller extends BaseController {
         return Route.response(this.res);
     }
 
-    view(data, headers = {}) {
+    view(data, headers?: Headers) {
         return Route.response(this.res).view(data, headers);
     }
 
@@ -35,6 +34,47 @@ export class Controller extends BaseController {
             .filter((mn) => mn?.filename.includes(this.name))
             .shift();
         return nodeModule;
+    }
+
+    
+    /**
+     * Display a listing of the resource.
+     */
+    public index()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public store(id: string)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public show(id: string)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public update(id: string)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public destroy(id: string)
+    {
+        //
     }
     
 }

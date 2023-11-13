@@ -1,17 +1,17 @@
 import I18next from 'i18next';
 
 import {
-  AppPath, BasePath,
-  Config, ConfigPath,
-  DatabasePath, Env,
-  Json,
-  PublicPath, Redirect, ResourcePath,
-  RoutePath, Send, SetLocale, StoragePath,
-  View,
-  ViewPath
-} from '../Foundation/Helpers';
+  AppPath, BasePath, Config, ConfigPath,
+  DatabasePath, Env, Json,
+  PublicPath, Redirect, ResourcePath, ServerName,
+  RoutePath, Send, ServerVersion, SetLocale, StoragePath,
+  View, ViewPath
+} from '.';
+
+import { App } from '@framework/Foundation/Application';
 
 declare global {
+  var serverVersion: ServerVersion;
   var base_path: BasePath;
   var app_path: AppPath;
   var config_path: ConfigPath;
@@ -26,11 +26,9 @@ declare global {
   var routes: (arg0: () => void) => void;
   var i18next: typeof I18next;
   var setLocale: SetLocale;
-  var serverName: serverName;
-  var serverPort: serverPort;
-  var serverProtocol: serverProtocol;
-  var serverHost: serverHost;
-  var serverUrl: serverUrl;
+  var serverName: ServerName;
+
+  var app: App;
 
   var send: Send;
   var json: Json;

@@ -12,13 +12,12 @@ export interface RouteGroupAttributes {
 
 export const _routers: Router[] = [];
 
-
 export type MyResponse = {
-    json: (value: any, headers?: { [key: string]: string | number; }) => Response;
-    send: (value: any, headers?: { [key: string]: string | number; }) => Response;
-    view: (value: any, headers?: { [key: string]: string | number; }) => Response;
-    redirect: (value: any, headers?: { [key: string]: string | number; }) => Response;
-    status: (value: any, headers?: { [key: string]: string | number; }) => Response;
+    json: (value: unknown, headers?: { [key: string]: string | number; }) => Response;
+    send: (value: unknown, headers?: { [key: string]: string | number; }) => Response;
+    view: (value: unknown, headers?: { [key: string]: string | number; }) => Response;
+    redirect: (value: unknown, headers?: { [key: string]: string | number; }) => Response;
+    status: (value: unknown, headers?: { [key: string]: string | number; }) => Response;
 };
 
 class Router {
@@ -29,7 +28,8 @@ class Router {
     protected _domain: string = '';
     protected _prefix: string = '';
     protected _routes: Route[] = [];
-    protected _group: Route[] = [];
+    protected static initiater: string|undefined = '';
+    protected static parentRouter: Router|null = null;
 
     constructor() {
     }
@@ -89,30 +89,49 @@ class Router {
     }
 
     public static group(arg0: { prefix?: string; middleware?: string[]; namespace?: string; }, arg1: (arg0) => void) {
+        if (!Router.parentRouter) {
+            Router.parentRouter = Router.instance;
+        }
+
         const instance = new Router();
-        instance._prefix = Router.instance._prefix;
 
+        if (Router.initiater !== arg0.prefix){
+            instance._prefix = Router.instance._prefix.replace(Router.initiater,'');
+            Router.initiater = arg0.prefix;
+        } 
+
+        instance._prefix = ('/' + instance._prefix + '/').replace(/\/+/g, '/');
         _routers.push(instance);
-
+        
         Router.instance = instance;
+
         return Router.instance.group(arg0, arg1);
     }
 
     public group(attributes: string): this;
-    public group(attributes: RouteGroupAttributes, routes: () => any): this;
+    public group(attributes: RouteGroupAttributes, routes: () => unknown): this;
     public group(attributes: any, routes?: any): this {
-
+        
         if (typeof attributes === 'string') {
             require(attributes).default;
         } else if (typeof attributes === 'object') {
-            this._prefix += attributes.prefix.replace(/\/+/g, '/');
+            this._prefix = (this._prefix + attributes.prefix).replace(/\/+/g, '/');
+
             this.middleware(attributes.middleware ?? []);
             this._domain = attributes.domain;
 
-            routes();
+            routes(this);
+
+            this.reset();
         }
 
         return this;
+    }
+
+    private reset() {
+        Router.initiater = '';
+        Router.instance = Router.parentRouter;
+        Router.parentRouter = null;
     }
 
     public domain(domain: string) {
@@ -125,13 +144,6 @@ class Router {
         this._prefix = ('/' + prefix + '/').replace(/\/+/g, '/');
 
         return this;
-    }
-
-    public static routeList() {
-        throw new Error('Not implemented');
-        return _routers.map((router) => {
-            return router._routes;
-        }).flat();
     }
 
     public static routerList() {

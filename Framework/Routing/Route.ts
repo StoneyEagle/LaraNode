@@ -5,14 +5,17 @@ import { Method, MethodEnum } from '@framework/Server/Express';
 import { Worker } from 'worker_threads';
 
 type MyResponse = {
-    json: (value: any, headers?: { [key: string]: string | number; }) => void | Response | Response<any, Record<string, any>>;
-    send: (value: any, headers?: { [key: string]: string | number; }) => void | Response | Response<any, Record<string, any>>;
-    view: (value: any, headers?: { [key: string]: string | number; }) => void | Response | Response<any, Record<string, any>>;
-    redirect: (value: any, headers?: { [key: string]: string | number; }) => void | Response | Response<any, Record<string, any>>;
+    json: (value: string|Object, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
+    send: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
+    view: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
+    redirect: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
     status: (value: number) => typeof Route;
 };
 
-type ActionType = string | typeof BaseController | (({ req, res, next, response }: { req: Request, res: Response, next: NextFunction, response: MyResponse; }) => Response);
+type ActionType = string 
+    | typeof BaseController 
+    | (({ req, res, next, response }: { req: Request, res: Response, next: NextFunction, response: MyResponse; }) => Response)
+    | ((arg: unknown) => Route)
 
 type Action = {
     req: Request,
@@ -20,6 +23,11 @@ type Action = {
     next: NextFunction,
     response: MyResponse;
 };
+
+type SendResonse = 
+    | { type: 'json'|'send'; data: string|Object; headers?: Headers; }
+    | { type: 'view'|'redirect'; data: string; headers?: Headers; }
+    | { type: 'status'; data: number; headers?: Headers; }
 
 class Route extends Router {
 
@@ -50,7 +58,9 @@ class Route extends Router {
         }
     }
 
-    sendResponse(res: Response, response: { type: string; data: any; headers: any; }){
+    sendResponse(res: Response, response: SendResonse){
+
+        if(!response) return res.sendStatus(404);
         
         if (response.type === 'view') {
             if (response.data.includes('<') && response.data.includes('</')) {
@@ -68,57 +78,74 @@ class Route extends Router {
         }
     }
 
-    runClass(controller: string, action: string): Promise<{ type: string; data: any; headers: any; }> {
+    runClass(controller: string, action: string): Promise<SendResonse> {
         return new Promise((resolve, reject) => {
-            const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
-                workerData: {
-                    controller: controller,
-                    action: action,
-                },
-                execArgv: ["--require", "ts-node/register"],
-            });
-            worker.once('message', (message) => {
-                return resolve(message);
-            });
-            worker.once('error', (error) => {
-                return reject(error);
-            });
+            try {
+
+                const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
+                    workerData: {
+                        controller: controller,
+                        action: action,
+                    },
+                    execArgv: ["--require", "ts-node/register"],
+                });
+                worker.once('message', (message) => {
+                    return resolve(message);
+                });
+                worker.once('error', (error) => {
+                    const exec = new (require(controller).default);
+                    try {
+                        return resolve(exec[action]());
+                    } catch (error) {
+                        console.log(exec, action);
+                    }
+                });
+                
+            } catch (error) {
+                const exec = new (require(controller).default);                       
+                return resolve(exec[action]());
+            }
         });
     }
     
-    runCallback(callback: () => void): Promise<{ type: string; data: any; headers: any; }> {
+    runCallback(callback: () => SendResonse): Promise<SendResonse> {
         return new Promise((resolve, reject) => {
-            const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
-                workerData: {
-                    callback: callback.toString(),
-                },
-                execArgv: ["--require", "ts-node/register"],
-            });
-            worker.once('message', (message) => {
-                return resolve(message);
-            });
-            worker.once('error', (error) => {
-                return reject(error);
-            });
+            try {
+                const worker = new Worker(__dirname + '/../Workers/CallbackWorker.ts', {
+                    workerData: {
+                        callback: callback.toString(),
+                    },
+                    execArgv: ["--require", "ts-node/register"],
+                });
+                worker.once('message', (message) => {
+                    return resolve(message);
+                });
+                worker.once('error', (error) => {
+                    return resolve(callback());
+                });
+                
+            } catch (error) {
+                return resolve(callback());
+            }
         });
     }
 
 
     public static response(res: Response): MyResponse {
         return {
-            json: (value: any, headers: { [key: string]: string | number; } = {}) => {
+            json: (value: Object|String, headers?: Headers) => {
                 return res.header(headers).json(value);
             },
-            send: (value: any, headers: { [key: string]: string | number; } = {}) => {
+            send: (value: string, headers?: Headers) => {
                 return res.header(headers).send(value);
             },
-            view: (value: any, headers: { [key: string]: string | number; } = {}) => {
+            view: (value: string, headers?: Headers) => {
                 if (value.includes('<') && value.includes('</')) {
                     return res.header(headers).send(value);
                 }
                 return res.header(headers).render(value);
             },
-            redirect: (value: any, headers: { [key: string]: string | number; } = {}) => {
+            redirect: (value: string, headers?: Headers) => {
                 return res.header(headers).redirect(value);
             },
             status: (value: number) => {
@@ -134,11 +161,15 @@ class Route extends Router {
     getMethod(): Method {
         return this._method;
     }
+    
+    getName() {
+        return this._name;
+    }
 
-    public static addRoute(uri: string, action: ActionType, method: Method): Route {
+    public static addRoute(uri: string, action: ActionType | unknown, method: Method): Route {
         const instance = new Route();
         instance._uri = '/' + uri.replace(/\/+$/g, '');
-        instance._action = action;
+        instance._action = action as ActionType;
         instance._method = method;
         Router.instance._routes.push(instance);
 
@@ -146,57 +177,57 @@ class Route extends Router {
     }
 
     public static get(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static get(uri: string, action: (arg: any) => any): Route;
+    public static get(uri: string, action: (arg: unknown) => unknown): Route;
     public static get(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static get(uri: string, action: any): Route {
+    public static get(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.get);
         return instance;
     }
 
     public static post(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static post(uri: string, action: (arg: any) => any): Route;
+    public static post(uri: string, action: (arg: unknown) => unknown): Route;
     public static post(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static post(uri: string, action: any): Route {
+    public static post(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.post);
         return instance;
     }
 
     public static put(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static put(uri: string, action: (arg: any) => any): Route;
+    public static put(uri: string, action: (arg: unknown) => unknown): Route;
     public static put(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static put(uri: string, action: any): Route {
+    public static put(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.put);
         return instance;
     }
 
     public static patch(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static patch(uri: string, action: (arg: any) => any): Route;
+    public static patch(uri: string, action: (arg: unknown) => unknown): Route;
     public static patch(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static patch(uri: string, action: any): Route {
+    public static patch(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.patch);
         return instance;
     }
 
     public static delete(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static delete(uri: string, action: (arg: any) => any): Route;
+    public static delete(uri: string, action: (arg: unknown) => unknown): Route;
     public static delete(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static delete(uri: string, action: any): Route {
+    public static delete(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.delete);
         return instance;
     }
 
     public static options(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static options(uri: string, action: (arg: any) => any): Route;
+    public static options(uri: string, action: (arg: unknown) => unknown): Route;
     public static options(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static options(uri: string, action: any): Route {
+    public static options(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.options);
         return instance;
     }
 
     public static any(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
-    public static any(uri: string, action: (arg: any) => any): Route;
+    public static any(uri: string, action: (arg: unknown) => unknown): Route;
     public static any(uri: string, action: (string | typeof BaseController)[]): Route;
-    public static any(uri: string, action: any): Route {
+    public static any(uri: string, action: ActionType | unknown): Route {
         const instance = Route.addRoute(uri, action, MethodEnum.all);
         return instance;
     }
@@ -214,11 +245,11 @@ class Route extends Router {
         return this;
     }
 
-    middlewareGroup(name: any, middleware: any) { }
+    middlewareGroup(name: unknown, middleware: unknown) { }
     auth(options = []) { }
-    view(uri: string, view: any, data = [], status = 200, headers = []) { }
-    resource(name: any, controller: any, options = []) { }
-    redirect(uri: string, destination: any, status = 302) { }
+    view(uri: string, view: unknown, data = [], status = 200, headers = []) { }
+    resource(name: unknown, controller: unknown, options = []) { }
+    redirect(uri: string, destination: unknown, status = 302) { }
 
 }
 

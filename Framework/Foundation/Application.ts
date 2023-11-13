@@ -3,8 +3,8 @@ import AuthServiceProvider from "@framework/Providers/AuthServiceProvider";
 import LanguageServiceProvider from "@framework/Providers/LanguageServiceProvider";
 
 class Application {
-    instance: any;
-
+    instance: _Application | undefined;
+    
     make() {
 
         if (this.instance) {
@@ -12,9 +12,13 @@ class Application {
         }
 
         this.instance = new _Application();
+        globalThis.app = this.instance;
+
         return this.instance;
     }
 }
+
+export type App = _Application;
 
 class _Application {
     AuthServiceProvider = <AuthServiceProvider>{};
@@ -23,19 +27,6 @@ class _Application {
 
 
     public constructor() {
-        // console.log(base_path());
-        // console.log(app_path());
-        // console.log(config_path());
-        // console.log(database_path());
-        // console.log(public_path());
-        // console.log(resource_path());
-        // console.log(route_path());
-        // console.log(storage_path());
-        // console.log(view_path());
-
-        // console.log(config('apiKeys'));
-        // console.log(config('apiKeys.TMDB_API_KEY'));
-// 
         (config('app.providers') as unknown as string[]).forEach((provider) => {
             const Class = require(provider).default;
             const instance = new Class();
@@ -45,21 +36,34 @@ class _Application {
 
             this[Class.name] = instance;
         });
-
-        const app = this.RouteServiceProvider.express.app;
-
     }
 
-    send() {
+    restart() {
+        this.terminate();
+        const instance = new Application().make();
+
+        return instance;
+    }
+
+    terminate() {
+        this.RouteServiceProvider.express.server?.close((err: Error | undefined) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log('Server closed');
+        
+        });
         return this;
     }
 
-    handle(arg0: any) {
-        return this;
-    }
-
-    terminate($request: any, $response: any) {
-        return this;
+    
+    status() {
+        return json({
+            status: 'alive',
+            version: serverVersion(),
+                        
+        });
     }
 }
 

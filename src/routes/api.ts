@@ -1,8 +1,8 @@
-import UserController from "@/app/Http/Controllers/UserController";
+import ServerController from "@/app/Http/Controllers/ServerController";
 import Route from "@framework/Routing/Route";
 
-Route.get('/', function () {
-    return send('<h1>Hello Api</h1>');
+Route.group({
+    prefix: 'server',
+}, function () {
+    Route.post('/restart', [ServerController.class, 'restart']).middleware('auth');
 });
-
-Route.get('/about', [UserController.class, 'about']);

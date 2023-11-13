@@ -5,6 +5,7 @@ import https from 'https';
 import Router from '@framework/Routing/Router';
 import compression from 'compression';
 import axios from 'axios';
+import { groupBy } from '@framework/Foundation/Helpers/array';
 
 export type Method = keyof typeof MethodEnum;
 export enum MethodEnum {
@@ -32,18 +33,14 @@ class Express {
     protected routes: {
         method: Method,
         path: string,
+        group: string | undefined,
+        name: string | undefined,
         callback: (req: Request, res: Response, next: NextFunction) => void,
     }[] = [];
 
     constructor() {
         this.app = _express();
-
-        // this.app.use(
-        //     cors({
-        //         // origin: origins,
-        //         origin: '*',
-        //     })
-        // );
+        
         this.applyMiddleWares(require(app_path('Http/Kernel.ts')).default.middleware);
 
         const shouldCompress = (req, res) => {
@@ -58,7 +55,7 @@ class Express {
         this.app.use(_express.json());
         this.app.use(_express.urlencoded({ extended: true }))
         this.app.set('view engine', 'ejs');
-
+        
     }
 
     make_HttpServer() {
@@ -133,7 +130,6 @@ class Express {
     }
 
     addRoutes(routers: Router[]) {
-        
         routers.forEach((group) => {
             const expressGroup = this.group((exressRouter) => {
                 group.getRoutes().forEach((route) => {
@@ -144,6 +140,8 @@ class Express {
 
                     this.routes.push({
                         method: method,
+                        name: route.getName(),
+                        group: group.getPrefix(),
                         path: this.sanitizeUri(group.getPrefix() + route.getPrefix() + route.getUri()),
                         callback: route.getCallback,
                     });
@@ -160,36 +158,74 @@ class Express {
             (req, res, next) => this.runMiddleWares(req, res, next, group.getMiddleware()), expressGroup);
         });
 
+        this.app.get('*', (req: Request, res: Response) => {
+            const urlMatch = this.routes.filter((route) => route.path == req.path).map((route) => route.method.toUpperCase());
+
+            urlMatch.length > 0
+                ? res.status(405).send(`The ${req.method} method is not supported for route ${req.path}. Supported methods: ${urlMatch.join(', ')}.`) 
+                : res.status(404).send(`The route ${req.path} could not be found.`);
+        });
+
         return this;
     }
 
-    public testRoutes() { 
-        for (const route of this.listRoutes()) {
-            const url = `${this.isHttps ? 'https' : 'http'}://localhost:${this.port}${route.path}`;
+    public async testRoutes() { 
 
-            axios[route.method as keyof Method](url.replace(':id','1'))
+        const result: {
+            method: Method,
+            group: string | undefined,
+            route: string,
+            status: 'success' | 'failed',
+        }[] = [];
+
+        for (const route of this.routes) {
+
+            const url = `${this.isHttps ? 'https' : 'http'}://localhost:${this.port}${route.path}`;
+            console.log(`Testing ${route.method.toUpperCase()} ${url}`);
+            await axios[route.method as keyof Method](url.replace(':id','1'))
                 .then(() => {
-                    console.log(`route: ${route.path} is working`);
+                    result.push({
+                        method: route.method,
+                        group: route.group,
+                        route: route.path, 
+                        status: 'success',
+                    });
                 }).catch(({request}) => {
-                    if(request.res?.statusCode == 401) {
-                         console.log(`route: ${route.path} is working`);
+                    
+                    if(request.res?.statusCode == 401 || request.res?.statusCode == 403 || request.res.url == '') {
+                         result.push({
+                            method: route.method,
+                            group: route.group,
+                            route: route.path, 
+                            status: 'success'
+                        });
                     } else {
-                        console.log(`route: ${route.path} is not working`);
+                        result.push({
+                            method: route.method,
+                            group: route.group,
+                            route: route.path, 
+                            status: 'failed'
+                        });
                     }
                 })
         }
+
+        console.table(`Successfully tested ${result.filter((r) => r.status == 'success').length} routes!`);
+        console.table(result);
     }
 
     public showRoutes() {
-        // console.log(express.app._router.stack.filter((r: any) => r.name == 'router').map((r: any) => r.handle));
+        // console.log(express.app._router.stack.filter((r: unknown) => r.name == 'router').map((r: unknown) => r.handle));
 
         console.table(this.listRoutes());
     }
 
-    runMiddleWares(req: Request, res: Response, next: NextFunction, middlewares: Middleware[]) {
+    runMiddleWares(req: Request, res: Response, next: NextFunction, ...middlewares: any[]) {
         if(!middlewares.length) return next();
 
         middlewares.forEach((middleware) => {
+            if(Array.isArray(middleware)) return this.runMiddleWares(req, res, next, ...middleware);
+            
             if(typeof middleware === 'function') {
                 const response = middleware(req, res, next);
                 if(!response) {
@@ -233,18 +269,13 @@ class Express {
         next();
     }
 
-    addRoute(method: Method, path: string, middlewares: Middleware[], callback: (req: any, res: any) => void) {
+    addRoute(method: Method, path: string, middlewares: Middleware[], callback: (req: Request, res: Response) => void) {
         this.app[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, middlewares), callback);
         return this;
     }
 
-    addGroupRoute(exressRouter: Router, method: Method, path: string, middlewares: Middleware[], callback: (req: any, res: any) => void) {
-        exressRouter[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, middlewares), callback);
-        return this;
-    }
-
     public listRoutes() {
-        return this.routes;
+        return groupBy(this.routes, 'group');
     }
     
     static getLanguage(req: Request) {

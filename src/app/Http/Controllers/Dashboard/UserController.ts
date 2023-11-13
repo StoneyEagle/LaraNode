@@ -1,6 +1,7 @@
-import { Controller } from "./Controller";
+import { Controller } from "../Controller";
 
 export default class UserController extends Controller {
+    public static class: string = __filename;
 
     public about() {
         return view('<h1>ABOOT</h1>');
@@ -23,8 +24,7 @@ export default class UserController extends Controller {
      */
     public store(id: string)
     {
-        console.log(this.req.body);
-        return json({id, body: 'Hello Store World'});
+        return json(`${__filename} store`);
     }
 
     /**
@@ -32,7 +32,7 @@ export default class UserController extends Controller {
      */
     public show(id)
     {
-        return json({id, body: 'Hello Show World'});
+        return json(`${__filename} show ${id}`);
     }
 
     /**
@@ -40,7 +40,7 @@ export default class UserController extends Controller {
      */
     public update(id: string)
     {
-        return json({id, body: 'Hello Update World'});
+        return json(`${__filename} update ${id}`);
     }
 
     /**
@@ -48,9 +48,16 @@ export default class UserController extends Controller {
      */
     public destroy(id: string)
     {
-        // return id;
-        // console.log(id);
-        return json({id, body: 'Hello Destroy World'});
+        return json(`${__filename} destroy ${id}`);
+    }
+
+    public permissions()
+    {
+        return json(`${__filename} permissions`);
+    }
+    
+    public notificationSettings() {
+        return json(`${__filename} notificationSettings`);
     }
     
 }

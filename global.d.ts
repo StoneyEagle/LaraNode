@@ -1,5 +1,6 @@
 
 declare global {
+  var allowedUsers: User[];
 }
 
 declare module 'express-serve-static-core' {

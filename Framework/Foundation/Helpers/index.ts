@@ -1,9 +1,18 @@
 import { dirname, resolve } from 'path';
 import dotenv from 'dotenv';
+import packageJson from "../../../package.json";
+import './array';
+import './string';
 
 dotenv.config();
 
 const ROOT = dirname(process.env.PWD ?? require.main?.filename ?? __dirname);
+
+export type ServerVersion = typeof serverVersion;
+export const serverVersion = (): string => {
+	return packageJson.version;
+};
+globalThis.serverVersion = serverVersion;
 
 export type BasePath = typeof base_path;
 export const base_path = (path: string = ''): string => {
@@ -74,7 +83,7 @@ export const env = (key: string, fallback: string | number | boolean = ''): stri
 globalThis.env = env;
 
 export type Config = typeof config;
-export const config = (key: string, fallback: string = ''): string => {
+export const config = (key: string, fallback: string = ''): string|number|object => {
     const keys = key.split('.');
     const value = recompose(require(config_path(keys[0])).default, keys.slice(1).join('.'));
 
@@ -82,7 +91,7 @@ export const config = (key: string, fallback: string = ''): string => {
 };
 globalThis.config = config;
 
-function recompose(obj: { [x: string]: any; }, string: string) {
+function recompose(obj: { [x: string]: string|number|object; } | string | number | object, string: string) {
     if (!string) {
         return obj;
     }
@@ -121,7 +130,7 @@ globalThis.country = country;
 
 export type ServerName = typeof serverName;
 export const serverName = (): string => {
-	return config('app.name');
+	return config('app.name') as string;
 }
 globalThis.serverName = serverName;
 
@@ -222,10 +231,10 @@ export const redirect = (data: string, headers: any = {}) => {
 globalThis.redirect = redirect;
 
 export type Json = typeof json;
-export const json = (data: any, headers: any = {}) => {
+export const json = <T>(data: T, headers: any = {}) => {
 	return {
 		type: 'json',
-		data,
+		data: data,
 		headers
 	};
 }

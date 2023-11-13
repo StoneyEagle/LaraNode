@@ -1,4 +1,5 @@
 import { parentPort, workerData } from 'worker_threads';
+require('@framework/Foundation/Helpers');
 
 const view = (data, headers = {}) => {
 	return {
