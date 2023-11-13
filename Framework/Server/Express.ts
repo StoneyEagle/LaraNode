@@ -217,7 +217,7 @@ class Express {
     public showRoutes() {
         // console.log(express.app._router.stack.filter((r: unknown) => r.name == 'router').map((r: unknown) => r.handle));
 
-        console.table(this.listRoutes());
+        console.table(this.routes);
     }
 
     runMiddleWares(req: Request, res: Response, next: NextFunction, ...middlewares: any[]) {

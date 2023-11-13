@@ -94,13 +94,8 @@ class Router {
         }
 
         const instance = new Router();
+        instance._prefix = ('/' + Router.instance._prefix.replace(Router.initiater,'') + '/').replace(/\/+/g, '/');
 
-        if (Router.initiater !== arg0.prefix){
-            instance._prefix = Router.instance._prefix.replace(Router.initiater,'');
-            Router.initiater = arg0.prefix;
-        } 
-
-        instance._prefix = ('/' + instance._prefix + '/').replace(/\/+/g, '/');
         _routers.push(instance);
         
         Router.instance = instance;
@@ -120,7 +115,7 @@ class Router {
             this.middleware(attributes.middleware ?? []);
             this._domain = attributes.domain;
 
-            routes(this);
+            routes();
 
             this.reset();
         }
