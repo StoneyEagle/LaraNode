@@ -28,7 +28,6 @@ class Router {
     protected _domain: string = '';
     protected _prefix: string = '';
     protected _routes: Route[] = [];
-    protected static initiater: string|undefined = '';
     protected static parentRouter: Router|null = null;
 
     constructor() {
@@ -94,7 +93,7 @@ class Router {
         }
 
         const instance = new Router();
-        instance._prefix = ('/' + Router.instance._prefix.replace(Router.initiater,'') + '/').replace(/\/+/g, '/');
+        instance._prefix = Router.instance._prefix;
 
         _routers.push(instance);
         
@@ -110,7 +109,7 @@ class Router {
         if (typeof attributes === 'string') {
             require(attributes).default;
         } else if (typeof attributes === 'object') {
-            this._prefix = (this._prefix + attributes.prefix).replace(/\/+/g, '/');
+            this.prefix(attributes.prefix);
 
             this.middleware(attributes.middleware ?? []);
             this._domain = attributes.domain;
@@ -124,7 +123,6 @@ class Router {
     }
 
     private reset() {
-        Router.initiater = '';
         Router.instance = Router.parentRouter;
         Router.parentRouter = null;
     }
@@ -136,7 +134,8 @@ class Router {
     }
 
     public prefix(prefix: string) {
-        this._prefix = ('/' + prefix + '/').replace(/\/+/g, '/');
+        this._prefix += '/' + prefix + '/';
+        this._prefix = this._prefix.replace(/\/+/g, '/');
 
         return this;
     }
