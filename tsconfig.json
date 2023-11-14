@@ -1,31 +1,36 @@
 {
 	"compilerOptions": {
 		"target": "ESNext",
-		"declaration": false,
-		"outDir": "./dist",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"moduleResolution": "Node",
 		"strict": true,
+		"jsx": "preserve",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noEmit": false,
+		"declaration": false,
+		"outDir": "./out",
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
 		"downlevelIteration": true,
 		"allowJs": true,
-		"module": "NodeNext",
-		"skipLibCheck": true,
-		"esModuleInterop": true,
 		"importHelpers": true,
-		"isolatedModules": true,
 		"moduleDetection": "force",
 		"noImplicitAny": false,
-		"noEmit": true,
 		"sourceMap": false,
-		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
 		"noErrorTruncation": true,
 		"lib": ["DOM", "ES6", "DOM.Iterable", "ScriptHost", "ES2016.Array.Include", "ESNext", "ES2015", "ES5"],
-		"baseUrl": ".",
-		"types": ["node"],
+		"baseUrl": "./",
+		"types": [
+			"electron-vite/node",
+		],
 		"paths": {
-			"@framework/*": ["./Framework/*"],
-			"@/*": ["./src/*"]
+			"@framework/*": ["./src/server/framework/*"],
+			"@resources/*": ["./resources/*"],
+			"@/*": ["./src/server/src/*"]
 		},
 		"plugins": [
 			{
@@ -39,11 +44,15 @@
 		"require": ["tsconfig-paths/register"],
 		"transpileOnly": true
 	},
-	"exclude": ["node_modules"],
+	"exclude": [
+	  "node_modules",
+	],
 	"include": [
+		"./package.json", 
+		"electron.vite.config.js",
 		"./**/*.ts",
-		"./**/*.d.ts",
-		"./package.json",
+		"src/**/*.d.ts",
+		"./*.d.ts",
 	],
 	"references": []
 }

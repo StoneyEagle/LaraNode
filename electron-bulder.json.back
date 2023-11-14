@@ -1,0 +1,83 @@
+{
+    "appId": "tv.nomercy.app",
+    "asar": false,
+    "asarUnpack": [
+    ],
+    "extraResources": [
+        {
+            "from": "src/server/src/**/*",
+            "to": "dist/main",
+            "filter": ["**/*"]
+        },
+        {
+          "from": "src/server/src/framework/**/*",
+          "to": "dist/main",
+          "filter": ["**/*"]
+        },
+        {
+            "from": "./src/server/src/",
+            "to": "server/",
+            "filter": ["**/*"]
+        },
+        {
+          "from": "./src/server/src/framework/",
+          "to": "framework/",
+          "filter": ["**/*"]
+        }
+    ],
+    "productName": "NoMercy MediaServer",
+    "compression": "maximum",
+    "icon": "src/electron/assets/icon.png",
+    "msi": {
+      "artifactName": "${productName}_${version}.${ext}"
+    },
+    "releaseInfo": {
+      "releaseDate": "2023-05-03T00:00:00Z",
+      "releaseName": "Donkey",
+      "releaseNotes": "Initial release"
+    },
+    "directories": {
+      "output": "release/${version}"
+    },
+    "mac": {
+      "artifactName": "${productName}_${version}.${ext}",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "legalTrademarks": "(c) 2023 NoMercy Entertainment",
+      "publisherName": "NoMercy Entertainment",
+      "compression": "maximum",
+      "icon": "src/electron/assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "publish": [
+        "github"
+      ],
+      "artifactName": "${productName}_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "shortcutName": "NoMercy MediaServer",
+      "createDesktopShortcut": "always"
+    },
+    "publish": {
+      "publisherName": [
+        "NoMercy Entertainment"
+      ],
+      "provider": "generic",
+      "channel": "latest",
+      "url": "https://github.com/electron-vite/electron-vite-react/releases/download/v0.9.9/"
+    }
+  }

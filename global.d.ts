@@ -1,3 +1,4 @@
+/// <reference types="electron-vite/node" />
 
 declare global {
   var allowedUsers: User[];
