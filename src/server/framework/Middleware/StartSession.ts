@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { jwtDecode } from 'jwt-decode';
 
-export default (req: Request, res: Response) => {   
-	const token = req.query.token ?? (req.headers.authorization as string)?.split(',')[0]?.split(' ')[1];
+export default (req: Request, res: Response) => {
+    const token = req.query.token ?? (req.headers.authorization as string)?.split(',')[0]?.split(' ')[1];
 
-    if(!token) return;
+    if (!token) return;
 
     const userinfo = jwtDecode(token as string) as any;
 

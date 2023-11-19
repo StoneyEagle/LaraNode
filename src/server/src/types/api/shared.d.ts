@@ -66,7 +66,7 @@ export interface Lolomo {
     backdrop: string;
     colorPalette: PaletteColors;
     rating: {
-        iso31661: string; 
+        iso31661: string;
         rating: string;
     };
     videoId: string;

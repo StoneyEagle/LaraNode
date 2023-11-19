@@ -12,11 +12,13 @@ class Electron {
         host: string;
         port: number;
         icon: string;
+        open: boolean;
     } = {
             laravelUrl: serverHost() + ':' + serverPort(),
             host: serverHost(),
             port: serverPort(),
-            icon: ''
+            icon: '',
+            open: true,
         };
 
     constructor(config: Partial<Electron['config']>) {
@@ -39,7 +41,7 @@ class Electron {
                     this.splash?.close();
                     this.createWindow();
                 })
-                .catch((error: any) => {
+                .catch((error: Error) => {
                     console.error(error);
                 });
 
@@ -65,7 +67,7 @@ class Electron {
             show: false,
             title: 'NoMercy MediaServer',
             width: Math.floor(width / 1.2),
-            height: Math.floor((width / 1.2) / 16 * 9.5),
+            height: Math.floor((width / 1.2) / 16 * 9),
             minWidth: 1320,
             minHeight: 860,
             resizable: true,
@@ -89,7 +91,9 @@ class Electron {
         });
 
         this.mainWindow.on('ready-to-show', () => {
-            this.mainWindow?.show();
+            if (this.config.open) {
+                this.mainWindow?.show();
+            }
         });
 
         this.mainWindow.webContents.setWindowOpenHandler((details) => {

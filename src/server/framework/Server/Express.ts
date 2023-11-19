@@ -40,7 +40,7 @@ class Express {
 
     constructor() {
         this.app = _express();
-        
+
         this.applyMiddleWares(require(app_path("Http/Kernel")).middleware);
 
         const shouldCompress = (req, res) => {
@@ -50,12 +50,12 @@ class Express {
             return compression.filter(req, res);
         };
         this.app.use(compression({ filter: shouldCompress }));
-    
+
         this.app.enable('trust proxy');
         this.app.use(_express.json());
-        this.app.use(_express.urlencoded({ extended: true }))
+        this.app.use(_express.urlencoded({ extended: true }));
         this.app.set('view engine', 'ejs');
-        
+
     }
 
     make_HttpServer() {
@@ -134,7 +134,7 @@ class Express {
             const expressGroup = this.group((exressRouter) => {
                 group.getRoutes().forEach((route) => {
                     const method = route.getMethod();
-                    if(!method) {
+                    if (!method) {
                         throw new Error('Method is not defined!');
                     }
 
@@ -146,30 +146,30 @@ class Express {
                         callback: route.getCallback,
                     });
 
-                    exressRouter[method](this.sanitizeUri(route.getPrefix() + route.getUri()), 
-                        this.setId, 
-                        (req,res,next) => this.runMiddleWares(req, res, next, route.getMiddleware()),
+                    exressRouter[method](this.sanitizeUri(route.getPrefix() + route.getUri()),
+                        this.setId,
+                        (req, res, next) => this.runMiddleWares(req, res, next, ...route.getMiddleware()),
                         (req, res) => route.getCallback(req, res));
 
                 });
             });
 
             this.app.use(group.getPrefix(),
-            (req, res, next) => this.runMiddleWares(req, res, next, group.getMiddleware()), expressGroup);
+                (req, res, next) => this.runMiddleWares(req, res, next, ...group.getMiddleware()), expressGroup);
         });
 
         this.app.get('*', (req: Request, res: Response) => {
             const urlMatch = this.routes.filter((route) => route.path == req.path).map((route) => route.method.toUpperCase());
 
             urlMatch.length > 0
-                ? res.status(405).send(`The ${req.method} method is not supported for route ${req.path}. Supported methods: ${urlMatch.join(', ')}.`) 
+                ? res.status(405).send(`The ${req.method} method is not supported for route ${req.path}. Supported methods: ${urlMatch.join(', ')}.`)
                 : res.status(404).send(`The route ${req.path} could not be found.`);
         });
 
         return this;
     }
 
-    public async testRoutes() { 
+    public async testRoutes() {
 
         const result: {
             method: Method,
@@ -177,7 +177,7 @@ class Express {
             route: string,
             status: 'success' | 'failed',
         }[] = [];
-        
+
         let request;
 
         for (const route of this.routes) {
@@ -185,50 +185,50 @@ class Express {
             const url = `${this.isHttps ? 'https' : 'http'}://localhost:${this.port}${route.path}`;
             console.log(`Testing ${route.method.toUpperCase()} ${url}`);
 
-            if(route.method == 'get') {
+            if (route.method == 'get') {
                 request = axios.get;
-            } else if(route.method == 'post') {
+            } else if (route.method == 'post') {
                 request = axios.post;
-            } else if(route.method == 'put') {
+            } else if (route.method == 'put') {
                 request = axios.put;
-            } else if(route.method == 'delete') {
+            } else if (route.method == 'delete') {
                 request = axios.delete;
-            } else if(route.method == 'patch') {
+            } else if (route.method == 'patch') {
                 request = axios.patch;
-            } else if(route.method == 'options') {
+            } else if (route.method == 'options') {
                 request = axios.options;
-            } else if(route.method == 'head') {
+            } else if (route.method == 'head') {
                 request = axios.head;
             } else {
                 request = axios.get;
             }
 
-            await request(url.replace(':id','1'))
+            await request(url.replace(':id', '1'))
                 .then(() => {
                     result.push({
                         method: route.method,
                         group: route.group,
-                        route: route.path, 
+                        route: route.path,
                         status: 'success',
                     });
-                }).catch(({request}) => {
-                    
-                    if(request.res?.statusCode == 401 || request.res?.statusCode == 403 || request.res.url == '') {
-                         result.push({
+                }).catch(({ request }) => {
+
+                    if (request.res?.statusCode == 401 || request.res?.statusCode == 403 || request.res.url == '') {
+                        result.push({
                             method: route.method,
                             group: route.group,
-                            route: route.path, 
+                            route: route.path,
                             status: 'success'
                         });
                     } else {
                         result.push({
                             method: route.method,
                             group: route.group,
-                            route: route.path, 
+                            route: route.path,
                             status: 'failed'
                         });
                     }
-                })
+                });
         }
 
         console.table(`Successfully tested ${result.filter((r) => r.status == 'success').length} routes!`);
@@ -239,40 +239,40 @@ class Express {
         console.table(this.routes);
     }
 
-    runMiddleWares(req: Request, res: Response, next: NextFunction, ...middlewares: any[]) {
-        if(!middlewares.length) return next();
+    runMiddleWares(req: Request, res: Response, next: NextFunction, ...middlewares: Middleware[]) {
+        if (!middlewares.length) return next();
 
         middlewares.forEach((middleware) => {
-            if(Array.isArray(middleware)) return this.runMiddleWares(req, res, next, ...middleware);
-            
-            if(typeof middleware === 'function') {
+            if (Array.isArray(middleware)) return this.runMiddleWares(req, res, next, ...middleware);
+
+            if (typeof middleware === 'function') {
                 const response = middleware(req, res, next);
-                if(!response) {
+                if (!response) {
                     next();
                 }
             } else {
                 // @ts-ignore
                 const response = require(middleware)(req, res, next);
-                if(!response) {
+                if (!response) {
                     next();
                 }
             }
         });
     }
-    
+
     applyMiddleWares(middlewares: Middleware[]) {
         middlewares.forEach((middleware: Middleware) => {
-            if(typeof middleware === 'function') {
-                this.app.use((req: Request, res: Response, next: NextFunction) =>{
+            if (typeof middleware === 'function') {
+                this.app.use((req: Request, res: Response, next: NextFunction) => {
                     const response = middleware(req, res, next);
-                    if(!response) {
+                    if (!response) {
                         next();
                     }
                 });
             } else {
                 this.app.use((req: Request, res: Response, next: NextFunction) => {
                     const response = require(middleware)(req, res, next);
-                    if(!response) {
+                    if (!response) {
                         next();
                     }
                 });
@@ -289,19 +289,19 @@ class Express {
     }
 
     addRoute(method: Method, path: string, middlewares: Middleware[], callback: (req: Request, res: Response) => void) {
-        this.app[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, middlewares), callback);
+        this.app[method](path, (req: Request, res: Response, next: NextFunction) => this.runMiddleWares(req, res, next, ...middlewares), callback);
         return this;
     }
 
     public listRoutes() {
         return groupBy(this.routes, 'group');
     }
-    
+
     static getLanguage(req: Request) {
         if (
-            !req.acceptsLanguages() 
-            || !req.acceptsLanguages()[0] 
-            || req.acceptsLanguages()[0] == '*' 
+            !req.acceptsLanguages()
+            || !req.acceptsLanguages()[0]
+            || req.acceptsLanguages()[0] == '*'
             || req.acceptsLanguages()[0] == 'undefined'
         ) {
             return 'en';
@@ -309,11 +309,11 @@ class Express {
         return req.acceptsLanguages()[0].split('-')[0] ?? 'en';
     };
 
-    static getCountry(req: Request){
+    static getCountry(req: Request) {
         if (
-            !req.acceptsLanguages() 
-            || !req.acceptsLanguages()[0] 
-            || req.acceptsLanguages()[0] == '*' 
+            !req.acceptsLanguages()
+            || !req.acceptsLanguages()[0]
+            || req.acceptsLanguages()[0] == '*'
             || req.acceptsLanguages()[0] == 'undefined'
         ) {
             return 'US';

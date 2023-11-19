@@ -2,7 +2,7 @@ import ServiceProvider from "@framework/Providers/ServiceProvider";
 import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
 import AuthServiceProvider from "@/app/Providers/AuthServiceProvider";
 import LanguageServiceProvider from "@/app/Providers/LanguageServiceProvider";
-import ElectronServiceProvider from "@framework/Providers/ElectronServiceProvider";
+import ElectronServiceProvider from "@/app/Providers/ElectronServiceProvider";
 
 export default {
 
@@ -16,15 +16,16 @@ export default {
 
     timezone: 'UTC',
     locale: 'en',
+    country: 'US',
     fallback_locale: 'en',
 
     key: env('APP_KEY'),
     cipher: 'AES-256-CBC',
-    
+
     providers: ServiceProvider.defaultProviders().merge([
-        AuthServiceProvider.class, 
+        AuthServiceProvider.class,
         LanguageServiceProvider.class,
         RouteServiceProvider.class,
         ElectronServiceProvider.class,
     ]),
-}
+};

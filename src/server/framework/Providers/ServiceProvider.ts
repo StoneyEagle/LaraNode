@@ -2,7 +2,7 @@
 class ServiceProvider {
     public static class: string = `${this.getFilePath()}`;
     providers: string[] = [];
-    
+
     constructor() {
         // this.register();
         // this.boot();
@@ -24,7 +24,7 @@ class ServiceProvider {
 
         return instance;
     }
-    
+
     merge(arg0: string[]) {
         this.providers.push(...arg0);
 

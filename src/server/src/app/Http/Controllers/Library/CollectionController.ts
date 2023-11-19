@@ -1,4 +1,4 @@
-import { CollectionResponse } from "@/types/api/base/collection";
+import type { CollectionResponse } from "@/types/api/base/collection";
 import { Controller } from "../Controller";
 
 export default class CollectionController extends Controller {

@@ -9,23 +9,23 @@ const getFiles = (path = 'src') => {
     const directories = files.filter((file) => file.isDirectory()).map((file) => file.name);
     const filesInDirectories = directories.map((directory) => getFiles(path + '/' + directory)).flat();
     return jsFiles.map((file) => resolve(__dirname, 'src', 'server', path + '/' + file)).concat(filesInDirectories);
-}
+};
 
 const getSourceFiles = () => {
     const sourceFiles = getFiles();
     const frameworkFiles = getFiles('framework');
 
     return [...new Set(sourceFiles.concat(frameworkFiles))] as string[];
-}
+};
 
 export default defineConfig(({ command }) => {
-  rmSync('dist', { recursive: true, force: true });
+    rmSync('dist', { recursive: true, force: true });
 
-  const isServe = command === 'serve';
-  const isBuild = command === 'build';
-  const sourcemap = isServe || !!process.env.VSCODE_DEBUG;
+    const isServe = command === 'serve';
+    const isBuild = command === 'build';
+    const sourcemap = isServe || !!process.env.VSCODE_DEBUG;
 
-  return {
+    return {
         main: {
             resolve: {
                 alias: {

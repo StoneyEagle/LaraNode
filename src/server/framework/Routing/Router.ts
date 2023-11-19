@@ -28,7 +28,7 @@ class Router {
     protected _domain: string = '';
     protected _prefix: string = '';
     protected _routes: Route[] = [];
-    protected static parentRouter: Router|null = null;
+    protected static parentRouter: Router | null = null;
 
     constructor() {
     }
@@ -62,8 +62,8 @@ class Router {
 
         if (Array.isArray(name)) {
             name.forEach((item) => {
-                const middleware = app_path(`Http/Middleware/${item}`)
-                if(this.hasFile(`${middleware}`)) {
+                const middleware = app_path(`Http/Middleware/${item}`);
+                if (this.hasFile(`${middleware}`)) {
                     files.push(`${middleware}`);
                 } else {
                     files.push(resolve(__dirname, '..', 'Middleware', item.toTitleCase()));
@@ -71,8 +71,8 @@ class Router {
             });
         } else {
             name.split(',').forEach((item) => {
-                const middleware = app_path(`Http/Middleware/${item}`)
-                if(this.hasFile(`${middleware}`)) {
+                const middleware = app_path(`Http/Middleware/${item}`);
+                if (this.hasFile(`${middleware}`)) {
                     files.push(`${middleware}`);
                 } else {
                     files.push(resolve(__dirname, '..', 'Middleware', item.toTitleCase()));
@@ -98,7 +98,7 @@ class Router {
         instance._prefix = Router.instance._prefix;
 
         _routers.push(instance);
-        
+
         Router.instance = instance;
 
         return Router.instance.group(arg0, arg1);
@@ -107,7 +107,7 @@ class Router {
     public group(attributes: string): this;
     public group(attributes: RouteGroupAttributes, routes: () => unknown): this;
     public group(attributes: any, routes?: any): this {
-        
+
         if (typeof attributes === 'string') {
             require(attributes);
         } else if (typeof attributes === 'object') {

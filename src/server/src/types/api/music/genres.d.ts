@@ -5,16 +5,16 @@ export interface GenresResponse {
 }
 
 export interface GenreItem {
-    id:               string;
-    name:             string;
+    id: string;
+    name: string;
     musicGenre_track: MusicGenreTrack[];
-    type:             string;
-    titleSort:        string;
-    origin:           string;
-    blurHash:         string;
+    type: string;
+    titleSort: string;
+    origin: string;
+    blurHash: string;
 }
 
 export interface MusicGenreTrack {
     musicGenre_id: string;
-    track_id:      string;
+    track_id: string;
 }

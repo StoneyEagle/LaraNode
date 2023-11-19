@@ -14,13 +14,13 @@ class LanguageServiceProvider extends ServiceProvider {
     public register(): void {
         // console.log('LanguageServiceProvider registered');
         i18next
-        	.use(FsBackend)
-        	.use(middleware.LanguageDetector)
-        	.init({
-        		fallbackLng: 'en',
-        		saveMissing: true,
-        		debug: false,
-        	});
+            .use(FsBackend)
+            .use(middleware.LanguageDetector)
+            .init({
+                fallbackLng: 'en',
+                saveMissing: true,
+                debug: false,
+            });
 
         globalThis.i18next = i18next;
     }

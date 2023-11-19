@@ -6,5 +6,5 @@ export default class ManageController extends Controller {
     public index() {
         return json(`${__filename} index`);
     }
-    
+
 }

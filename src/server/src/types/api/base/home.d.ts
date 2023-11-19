@@ -46,7 +46,7 @@ export interface ContinueWatching {
     overview: string;
     logo: string;
     rating: {
-        iso31661: string; 
+        iso31661: string;
         rating: string;
     };
     videoId: string;

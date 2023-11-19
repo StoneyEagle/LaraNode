@@ -1,15 +1,20 @@
 import I18next from 'i18next';
+import './array';
+import './string';
+import './time';
 
 import {
   AppPath, BasePath, Config, ConfigPath,
   DatabasePath, Env, Json,
   PublicPath, Redirect, ResourcePath, ServerName,
   RoutePath, Send, ServerVersion, SetLocale, StoragePath,
-  View, ViewPath, ServerPort, ServerHost
+  View, ViewPath, ServerPort, ServerHost, PromiseQueue
 } from '.';
 
 import { App } from '@framework/Foundation/Application';
 import Electron from '@framework/Server/Electron';
+import { GroupBy, Unique } from './array';
+import { MatchPercentage, SortByMatchPercentage } from './string';
 
 declare global {
   var serverVersion: ServerVersion;
@@ -39,8 +44,15 @@ declare global {
   var redirect: Redirect;
 
   var electron: Electron;
-}
 
-declare var require: any;
+  var promiseQueue: PromiseQueue;
+
+
+  var groupBy: GroupBy;
+  var unique: Unique;
+
+  var matchPercentage: MatchPercentage;
+  var sortByMatchPercentage: SortByMatchPercentage;
+}
 
 export { };

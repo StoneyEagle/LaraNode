@@ -4,15 +4,15 @@ const allowedUsers = [];
 globalThis.allowedUsers = allowedUsers;
 
 export default (req: Request, res: Response) => {
-    if(!req.user) {
-        return res.status(401).json({
-            message: 'Unauthorized'
-        });
-    }
-    
-    req.isOwner = isOwner(req);
-    req.isModerator = isModerator(req);
-    req.isAllowed = isAllowed(req);
+	if (!req.user) {
+		return res.status(401).json({
+			message: 'Unauthorized'
+		});
+	}
+
+	req.isOwner = isOwner(req);
+	req.isModerator = isModerator(req);
+	req.isAllowed = isAllowed(req);
 
 };
 
@@ -25,12 +25,12 @@ export const isOwner = (req: Request | string): boolean => {
 	// }
 	// return owner == req.user.sub;
 
-    return false;
+	return false;
 };
 
 export const isModerator = (req: Request): boolean => {
 	// const moderators = useSelector((state: AppState) => state.config.moderators);
-    const moderators = globalThis.moderators ?? [];
+	const moderators = globalThis.moderators ?? [];
 
 	return moderators.some(m => m.id == req.user.sub);
 };

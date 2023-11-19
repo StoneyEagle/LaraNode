@@ -1,4 +1,72 @@
 
+/**
+ * Pads a number or string with leading zeros until it reaches the specified length.
+ * @param number - The number or string to pad.
+ * @param places - The total length of the resulting string, including the original number or string.
+ * @returns The padded string.
+ */
+export const pad = (number: string | number, places = 2): string => {
+	if (typeof number !== 'undefined') {
+		const zero = places - number.toString().length + 1;
+
+		return Array(+(zero > 0 && zero)).join('0') + number;
+	}
+	return '';
+};
+export type Pad = typeof pad;
+globalThis.pad = pad;
+
+/**
+ * Calculates the percentage match between two strings.
+ * @param strA - The first string to compare.
+ * @param strB - The second string to compare.
+ * @returns The percentage match between the two strings.
+ */
+export const matchPercentage = (strA: string, strB: string): number => {
+	let result = 0;
+	// eslint-disable-next-line no-cond-assign
+	for (let i = strA.length; (i -= 1);) {
+		if (typeof strB[i] == 'undefined' || strA[i] == strB[i]) {
+			//
+		} else if (strA[i].toLowerCase() == strB[i].toLowerCase()) {
+			result += 1;
+		} else {
+			result += 4;
+		}
+	}
+	return (
+		100
+		- ((result + 4 * Math.abs(strA.length - strB.length))
+			/ (2 * (strA.length + strB.length)))
+		* 100
+	);
+};
+export type MatchPercentage = typeof matchPercentage;
+globalThis.matchPercentage = matchPercentage;
+
+/**
+ * * Sort Array of objects by the percentage matched,
+ * @param {Array} array Array
+ * @param {string} key Group key
+ * @param {string} match Match to
+ */
+export const sortByMatchPercentage = <T>(
+	array: T[],
+	key: string | number,
+	match: string
+) => {
+	return array.sort((a, b) => {
+		const x = matchPercentage(match, a[key]);
+		const y = matchPercentage(match, b[key]);
+		return x > y
+			? -1
+			: x < y
+				? 1
+				: 0;
+	});
+};
+export type SortByMatchPercentage = typeof sortByMatchPercentage;
+globalThis.sortByMatchPercentage = sortByMatchPercentage;
 
 String.prototype.capitalize = function (): string {
 	return this.charAt(0).toUpperCase() + this.slice(1);

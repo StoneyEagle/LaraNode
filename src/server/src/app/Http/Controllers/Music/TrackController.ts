@@ -6,28 +6,28 @@ export default class TrackController extends Controller {
     public index() {
         return json(`${__filename} index`);
     }
-    
+
     public like(id: string) {
         return json(`${__filename} like ${id}`);
     }
 
     public search() {
-        return json(`${__filename} search`);        
+        return json(`${__filename} search`);
     }
 
     public lyrics() {
-        return json(`${__filename} lyrics`);        
+        return json(`${__filename} lyrics`);
     }
 
     public images() {
-        return json(`${__filename} images`);        
+        return json(`${__filename} images`);
     }
 
     public coverImage() {
-        return json(`${__filename} coverImage`);        
+        return json(`${__filename} coverImage`);
     }
 
     public typeSearch() {
-        return json(`${__filename} typeSearch`);        
+        return json(`${__filename} typeSearch`);
     }
 }

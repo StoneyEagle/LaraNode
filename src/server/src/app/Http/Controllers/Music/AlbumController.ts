@@ -1,6 +1,6 @@
-import { AlbumResponse } from "@/types/api/music/album";
+import type { AlbumResponse } from "@/types/api/music/album";
 import { Controller } from "../Controller";
-import { MusicCardPageResponse } from "@/types/api/music/musicPlayer";
+import type { MusicCardPageResponse } from "@/types/api/music/musicPlayer";
 
 export default class AlbumController extends Controller {
     public static class: string = __filename;
@@ -14,7 +14,7 @@ export default class AlbumController extends Controller {
         // @ts-ignore
         return json<AlbumResponse>(`${__filename} index`);
     }
-    
+
     public like(id: string) {
         return json(`${__filename} like ${id}`);
     }

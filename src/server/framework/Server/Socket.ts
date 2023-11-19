@@ -6,13 +6,13 @@ let io: _Server = <_Server>{};
 
 class Socket {
     instance: _Socket | undefined;
-    
+
     make() {
-        
+
         if (this.instance) {
             return this.instance;
         }
-        
+
         this.instance = new _Socket();
         return this.instance;
     }
@@ -27,7 +27,7 @@ class _Socket {
 
     }
 
-    makeServer(server: Server<typeof IncomingMessage, typeof ServerResponse> | Server<typeof IncomingMessage, typeof ServerResponse> | undefined, config: Partial<ServerOptions>){
+    makeServer(server: Server<typeof IncomingMessage, typeof ServerResponse> | Server<typeof IncomingMessage, typeof ServerResponse> | undefined, config: Partial<ServerOptions>) {
         io = new _Server(server, {
             ...config,
             cors: {
@@ -86,17 +86,17 @@ class _Socket {
         this.handle();
     }
 
-    applyMiddlewares(){
-		io.use(
-			socketioJwt.authorize({
-				secret: this.public_key,
-				handshake: true,
-				auth_header_required: false,
-			})
-		);
+    applyMiddlewares() {
+        io.use(
+            socketioJwt.authorize({
+                secret: this.public_key,
+                handshake: true,
+                auth_header_required: false,
+            })
+        );
     }
 
-    handle(){
+    handle() {
         io.once('connection', (socket: SocketType) => {
             this.connectedOnce(socket);
         });
@@ -106,7 +106,7 @@ class _Socket {
         });
     }
 
-    connected(socket: SocketType){
+    connected(socket: SocketType) {
         console.log('connected');
 
         socket.on('disconnect', () => {
@@ -114,8 +114,8 @@ class _Socket {
         });
         socket.on('connect_error', (err) => {
             console.log(`connect_error due to ${err.message}`);
-        });  
-        
+        });
+
         socket.emit('update_content');
 
         socket.emit('notification', {
@@ -130,10 +130,10 @@ class _Socket {
             to: '*',
             image: `https://cdn${process.env.ROUTE_SUFFIX ?? ''}.nomercy.tv/img/favicon.ico`,
             created_at: Date.now(),
-        });      
+        });
     }
 
-    connectedOnce(socket: SocketType){
+    connectedOnce(socket: SocketType) {
         console.log('once connected');
     }
 

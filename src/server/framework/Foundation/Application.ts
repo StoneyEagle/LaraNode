@@ -5,8 +5,8 @@ import LanguageServiceProvider from "@framework/Providers/LanguageServiceProvide
 
 class Application {
     instance: _Application | undefined;
-    
-    make() {
+
+    boot() {
 
         if (this.instance) {
             throw new Error('Application instance already exists');
@@ -41,7 +41,7 @@ class _Application {
 
     restart() {
         this.terminate();
-        const instance = new Application().make();
+        const instance = new Application().boot();
 
         return instance;
     }
@@ -53,17 +53,17 @@ class _Application {
                 return;
             }
             console.log('Server closed');
-        
+
         });
         return this;
     }
 
-    
+
     status() {
         return json({
             status: 'alive',
             version: serverVersion(),
-                        
+
         });
     }
 }

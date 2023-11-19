@@ -1,4 +1,4 @@
-import { LibrariesResponse } from "@/types/api/base/library";
+import type { LibrariesResponse } from "@/types/api/base/library";
 import { Controller } from "../Controller";
 
 export default class LibraryController extends Controller {

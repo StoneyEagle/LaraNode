@@ -29,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider {
 
         this.express.make_HttpServer();
         this.express.addRoutes(Router.routerList());
-        this.express.startServer();  
+        this.express.startServer();
 
         return this.express;
     }

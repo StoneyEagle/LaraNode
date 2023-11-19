@@ -38,7 +38,6 @@ class RouteServiceProvider extends ServiceProvider {
                 .prefix('/api/v1/dashboard')
                 .group(base_path('routes/api/v1/dashboard'));
                 
-
             Router.middleware('web')
                 .prefix('/api/v1/music')
                 .group(base_path('routes/api/v1/music'));

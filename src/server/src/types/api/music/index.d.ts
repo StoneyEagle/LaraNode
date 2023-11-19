@@ -23,11 +23,11 @@ export interface HomeDataItem {
     year?: number | null;
     tracks?: number;
     Artist?: (Artist & {
-		_count: Prisma.ArtistCountOutputType;
-	})[];
+        _count: Prisma.ArtistCountOutputType;
+    })[];
     Album?: (Album & {
-		_count: Prisma.AlbumCountOutputType;
-	})[];
+        _count: Prisma.AlbumCountOutputType;
+    })[];
 }
 
 export interface Count {

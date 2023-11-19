@@ -10,7 +10,7 @@
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"noEmit": false,
+		"noEmit": true,
 		"declaration": false,
 		"outDir": "./out",
 		"allowSyntheticDefaultImports": true,
@@ -51,8 +51,8 @@
 		"./package.json", 
 		"electron.vite.config.js",
 		"./**/*.ts",
-		"src/**/*.d.ts",
-		"./*.d.ts",
+		"./**/*.d.ts",
+		"./src/server/**/*.d.ts",
 	],
 	"references": []
 }

@@ -36,45 +36,40 @@ export class Controller extends BaseController {
         return nodeModule;
     }
 
-    
+
     /**
      * Display a listing of the resource.
      */
-    public index()
-    {
+    public index() {
         //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public store(id: string)
-    {
+    public store(id: string) {
         //
     }
 
     /**
      * Display the specified resource.
      */
-    public show(id: string)
-    {
+    public show(id: string) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public update(id: string)
-    {
+    public update(id: string) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public destroy(id: string)
-    {
+    public destroy(id: string) {
         //
     }
-    
+
 }

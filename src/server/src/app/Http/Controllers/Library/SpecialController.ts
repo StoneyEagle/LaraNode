@@ -10,7 +10,7 @@ export default class SpecialController extends Controller {
 
     public available() {
         // @ts-ignore
-        return json<{available: boolean}>(`${__filename} available`);
+        return json<{ available: boolean; }>(`${__filename} available`);
     }
 
     public watch() {

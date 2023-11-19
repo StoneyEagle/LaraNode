@@ -1,4 +1,4 @@
-import { CreditsClass } from "@/types/server";
+import type { CreditsClass } from "@/types/server";
 import { PaletteColors, Translations } from "../shared";
 
 export interface PeopleResponse {

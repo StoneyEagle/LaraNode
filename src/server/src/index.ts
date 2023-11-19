@@ -1,5 +1,3 @@
-import bootstrap from '@/bootstrap/app';
+import app from '@/bootstrap/app';
 
-bootstrap.make();
-
-export { bootstrap }
+app.boot();

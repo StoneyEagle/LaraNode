@@ -2,7 +2,7 @@
 import ServiceProvider from '@framework/Providers/AuthServiceProvider';
 
 class AuthServiceProvider extends ServiceProvider {
-    
+
     constructor() {
         super();
     }

@@ -1,4 +1,4 @@
-import { MusicHomeResponse } from "@/types/api/music";
+import type { MusicHomeResponse } from "@/types/api/music";
 import { Controller } from "../Controller";
 
 export default class MusicController extends Controller {

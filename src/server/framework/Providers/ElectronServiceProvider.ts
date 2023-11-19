@@ -7,7 +7,8 @@ import icon from "@/assets/icon.png?asset";
 class ElectronServiceProvider extends ServiceProvider {
     public static class: string = this.getFilePath();
 
-    electron: Electron| undefined;
+    electron: Electron | undefined;
+    open: boolean = true;
 
     constructor() {
         super();
@@ -19,9 +20,10 @@ class ElectronServiceProvider extends ServiceProvider {
 
     public boot(): void {
         // console.log('ElectronServiceProvider booted');
-        
+
         this.electron = new Electron({
             icon: icon,
+            open: this.open,
         });
         globalThis.electron = this.electron;
 

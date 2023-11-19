@@ -1,4 +1,4 @@
-import { InfoResponse } from "@/types/api/base/info";
+import type { InfoResponse } from "@/types/api/base/info";
 import { Controller } from "../Controller";
 
 export default class TvController extends Controller {
@@ -11,7 +11,7 @@ export default class TvController extends Controller {
 
     public available() {
         // @ts-ignore
-        return json<{available: boolean}>(`${__filename} available`);
+        return json<{ available: boolean; }>(`${__filename} available`);
     }
 
     public watch() {

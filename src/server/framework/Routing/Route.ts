@@ -176,7 +176,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static get(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static get(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static get(uri: string, action: (arg: unknown) => unknown): Route;
     public static get(uri: string, action: (string | typeof BaseController)[]): Route;
     public static get(uri: string, action: ActionType | unknown): Route {
@@ -184,7 +184,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static post(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static post(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static post(uri: string, action: (arg: unknown) => unknown): Route;
     public static post(uri: string, action: (string | typeof BaseController)[]): Route;
     public static post(uri: string, action: ActionType | unknown): Route {
@@ -192,7 +192,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static put(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static put(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static put(uri: string, action: (arg: unknown) => unknown): Route;
     public static put(uri: string, action: (string | typeof BaseController)[]): Route;
     public static put(uri: string, action: ActionType | unknown): Route {
@@ -200,7 +200,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static patch(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static patch(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static patch(uri: string, action: (arg: unknown) => unknown): Route;
     public static patch(uri: string, action: (string | typeof BaseController)[]): Route;
     public static patch(uri: string, action: ActionType | unknown): Route {
@@ -208,7 +208,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static delete(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static delete(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static delete(uri: string, action: (arg: unknown) => unknown): Route;
     public static delete(uri: string, action: (string | typeof BaseController)[]): Route;
     public static delete(uri: string, action: ActionType | unknown): Route {
@@ -216,7 +216,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static options(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static options(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static options(uri: string, action: (arg: unknown) => unknown): Route;
     public static options(uri: string, action: (string | typeof BaseController)[]): Route;
     public static options(uri: string, action: ActionType | unknown): Route {
@@ -224,7 +224,7 @@ class Route extends Router {
         return instance;
     }
 
-    public static any(uri: string, action: ({ req, res, next, response }: Action) => Response): Route;
+    public static any(uri: string, action: ({ req, res, next, response }: Action) => Promise<unknown>): Route;
     public static any(uri: string, action: (arg: unknown) => unknown): Route;
     public static any(uri: string, action: (string | typeof BaseController)[]): Route;
     public static any(uri: string, action: ActionType | unknown): Route {

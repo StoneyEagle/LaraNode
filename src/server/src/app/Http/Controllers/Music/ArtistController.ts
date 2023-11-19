@@ -1,4 +1,4 @@
-import { ArtistResponse } from "@/types/api/music/artist";
+import type { ArtistResponse } from "@/types/api/music/artist";
 import { Controller } from "../Controller";
 
 export default class ArtistController extends Controller {
@@ -13,7 +13,7 @@ export default class ArtistController extends Controller {
         // @ts-ignore
         return json<ArtistResponse>(`${__filename} index`);
     }
-    
+
     public like(id: string) {
         return json(`${__filename} like ${id}`);
     }

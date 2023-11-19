@@ -1,6 +1,6 @@
-import { PlaylistsResponse } from "@/types/api/music/playlists";
+import type { PlaylistsResponse } from "@/types/api/music/playlists";
 import { Controller } from "../Controller";
-import { DisplayList } from "@/types/api/music/musicPlayer";
+import type { DisplayList } from "@/types/api/music/musicPlayer";
 
 export default class PlaylistController extends Controller {
     public static class: string = __filename;
@@ -14,13 +14,13 @@ export default class PlaylistController extends Controller {
         // @ts-ignore
         return json<DisplayList>(`${__filename} show ${id}`);
     }
-    
+
     public store(id: string) {
-        return json(`${__filename} store ${id}`);        
+        return json(`${__filename} store ${id}`);
     }
 
     public update(id: string) {
-        return json(`${__filename} update ${id}`);        
+        return json(`${__filename} update ${id}`);
     }
 
     public destroy(id: string) {

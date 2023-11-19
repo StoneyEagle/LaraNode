@@ -1,5 +1,7 @@
 import { LibraryItem } from '../base/library';
 import { PaletteColors } from '../shared';
+import { Track } from './favorite';
+import { Playlist } from './playlists';
 
 export enum State {
     idle = 'idle',
@@ -17,7 +19,7 @@ export enum MutedState {
 }
 
 export interface Music {
-    playlists: any[];
+    playlists: Playlist[];
     audio: HTMLAudioElement;
     backLog: Song[];
     context: Context;
@@ -107,7 +109,7 @@ export interface Song {
     updated_at: string;
     album_track: Album[];
     artist_track: Album[];
-    track_user: any[];
+    track_user: Track[];
     type: string;
     favorite_track: boolean;
     origin: string;

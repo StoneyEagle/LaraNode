@@ -1,4 +1,4 @@
-import { PersonResponse } from "@/types/api/base/person";
+import type { PersonResponse } from "@/types/api/base/person";
 import { Controller } from "../Controller";
 
 export default class SpecialController extends Controller {

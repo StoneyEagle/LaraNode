@@ -10,14 +10,14 @@ import ServerController from "@/app/Http/Controllers/Dashboard/ServerController"
 import LogsController from "@/app/Http/Controllers/Dashboard/LogsController";
 
 Route.get('/', function () {
-    return send('<h1>Hello Dashboard</h1>');
+	return send('<h1>Hello Dashboard</h1>');
 });
 
 Route.post('/general/languages', [ResourceController.class, 'languages']);
 Route.post('/general/countries', [ResourceController.class, 'countries']);
 
 Route.group({
-    prefix: 'manage',
+	prefix: 'manage',
 }, function () {
 	Route.get('/permissions', [UserController.class, 'permissions']);
 
@@ -31,11 +31,11 @@ Route.group({
 	Route.post('/users/permissions', [UserController.class, 'index']);
 	Route.patch('/users/permissions', [UserController.class, 'index']);
 	Route.post('/users/notificationsettings', [UserController.class, 'notificationSettings']);
-	
+
 	Route.get('/encoderprofiles', [UserController.class, 'index']);
 	Route.post('/encoderprofiles', [UserController.class, 'index']);
 	Route.patch('/encoderprofiles', [UserController.class, 'index']);
-	
+
 	Route.get('/configuration', [ConfigurationController.class, 'index']);
 	Route.post('/configuration', [ConfigurationController.class, 'store']);
 	Route.patch('/configuration', [ConfigurationController.class, 'update']);
@@ -68,7 +68,7 @@ Route.group({
 	Route.patch('/specials/', [SpecialsController.class, 'update']);
 	Route.get('/specials/:id', [SpecialsController.class, 'show']);
 	Route.get('/specials/search', [SpecialsController.class, 'search']);
-	
+
 	Route.get('/libraries/', [LibraryController.class, 'index']);
 	Route.patch('/libraries/', [LibraryController.class, 'update']);
 	Route.post('/libraries/', [LibraryController.class, 'create']);

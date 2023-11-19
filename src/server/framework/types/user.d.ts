@@ -8,29 +8,29 @@ export interface Token {
 }
 
 export interface IDToken {
-    aud:                string;
-    iss:                string;
-    iat:                number;
-    exp:                number;
-    sub:                string;
-    name:               string;
+    aud: string;
+    iss: string;
+    iat: number;
+    exp: number;
+    sub: string;
+    name: string;
     preferred_username: string;
-    locale:             string|null;
-    given_name:         string;
-    family_name:        string;
-    nickname:           string;
-    email:              string;
-    email_verified:     number;
+    locale: string | null;
+    given_name: string;
+    family_name: string;
+    nickname: string;
+    email: string;
+    email_verified: number;
 }
 
 export interface AccessToken {
-    aud:    string;
-    jti:    string;
-    iat:    number;
-    nbf:    number;
-    exp:    number;
-    sub:    string;
+    aud: string;
+    jti: string;
+    iat: number;
+    nbf: number;
+    exp: number;
+    sub: string;
     scopes: string[];
-    name:   string;
-    email:  string;
+    name: string;
+    email: string;
 }

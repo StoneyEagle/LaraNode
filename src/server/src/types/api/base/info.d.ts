@@ -1,4 +1,8 @@
+import { ContentRating } from "@/app/Http/Clients/Tmdb/types/shared/content_rating";
 import { ColorPalettes, PaletteColors } from "../shared";
+import { Similar } from "@/app/Http/Clients/Tmdb/types/shared/similar";
+import { Recommendations } from "@/app/Http/Clients/Tmdb/types/shared/recommendation";
+import { Season } from "@/app/Http/Clients/Tmdb/types/season/season";
 
 export interface InfoResponse {
     id: number;
@@ -11,7 +15,7 @@ export interface InfoResponse {
     overview: string | null;
     titleSort: string;
     voteAverage: number | null;
-    contentRatings: any[];
+    contentRatings: ContentRating[];
     year: number;
     numberOfEpisodes?: number;
     haveEpisodes?: number;
@@ -38,9 +42,9 @@ export interface InfoResponse {
     colorPalette?: ColorPalettes;
 
     videos: ExtendedVideo[];
-    similar: any[];
-    recommendations: any[];
-    seasons: any[];
+    similar: Similar[];
+    recommendations: Recommendations[];
+    seasons: Season[];
 }
 
 export interface MediaItem {

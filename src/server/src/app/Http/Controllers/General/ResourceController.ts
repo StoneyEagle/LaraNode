@@ -13,7 +13,7 @@ export default class ResourceController extends Controller {
         // @ts-ignore
         return json<Language[]>(`${__filename} index`);
     }
-    
+
     public countries() {
         // @ts-ignore
         return json<Country[]>(`${__filename} index`);

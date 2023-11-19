@@ -2,8 +2,8 @@ import { allowedOrigins } from '@/app/Http/Middleware/Cors';
 import { Request, Response } from 'express';
 
 export default (req: Request, res: Response) => {
-    const origins = process.env.ALLOWED_ORIGINS 
-        ? process.env.ALLOWED_ORIGINS?.split(',') 
+    const origins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS?.split(',')
         : allowed;
 
     if (origins.some(o => o == req.headers.origin) || origins.some(o => o == '*')) {
