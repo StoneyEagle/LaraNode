@@ -12,6 +12,11 @@ Route.get('/', function () {
 
 Route.get('/test', async function () {
 
+    // const music = new FanartMusic();
+    // const artist = await music.artist('f4a31f0a-51dd-4fa7-986d-3095c40c5ed9');
+
+    // return send(artist);
+
     // return send(await TmdbMovie.discover({
     //     params: {
     //         year: 1989,
