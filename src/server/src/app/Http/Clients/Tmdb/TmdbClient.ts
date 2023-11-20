@@ -82,7 +82,7 @@ class TmdbClient extends Connector {
         const queue = TmdbClient.getQueue();
         const key = `${TmdbClient.name}_${Math.random().toString(36).substring(3)}`;
         
-        return promiseRetry(function (retry, number) {
+        return promiseRetry<T>((retry, number) => {
             queue.enqueue(async () => {
                 return {
                     key: key,
@@ -93,22 +93,22 @@ class TmdbClient extends Connector {
             return new Promise((resolve, reject) => {
                 queue.on("resolve", result => {
                     if (result.key && key === result.key) {
-                        
-                        return resolve(result.data as T);
+                        return resolve(result.data);
                     }
                 });
                 queue.on("reject", result => {
                     if (result.key && key === result.key) {
-                        return retry(result.data as Error);
+                        return retry(result.data);
                     }
                 });
             });
         })
-        .then(function (value) {
-            return value as T;
-        }, function (err) {
+        .then((value) => {
+            return value;
+        }, (err) => {
+            this.error(err);
+            // TODO: store error in database ${number}
             return Promise.reject(err);
-            // TODO: store error in database
         });
     }
 
