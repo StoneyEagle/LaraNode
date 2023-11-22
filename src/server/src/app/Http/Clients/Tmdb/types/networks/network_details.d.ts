@@ -1,4 +1,4 @@
-import { Network } from './network';
+import { Network } from './network.ts';
 import { NetworkAlternatetiveNames } from './network_alternatetive_names';
 import { NetworkImages } from './network_images';
 

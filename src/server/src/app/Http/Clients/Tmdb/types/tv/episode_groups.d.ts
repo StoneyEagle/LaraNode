@@ -1,4 +1,4 @@
-import { Network } from '../networks/network';
+import { Network } from '../networks/network.js';
 
 export interface TvEpisodeGroups {
 	results: EpisodeGroup[];

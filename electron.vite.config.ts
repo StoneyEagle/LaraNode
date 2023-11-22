@@ -5,7 +5,7 @@ import pkg from './package.json';
 
 const getFiles = (path = 'src') => {
     const files = readdirSync(resolve(__dirname, 'src', 'server', path), { withFileTypes: true });
-    const jsFiles = files.filter((file) => file.isFile() && file.name.endsWith('.ts')).map((file) => file.name);
+    const jsFiles = files.filter((file) => file.isFile() && file.name.endsWith('.ts') && !file.name.endsWith('.d.ts')).map((file) => file.name);
     const directories = files.filter((file) => file.isDirectory()).map((file) => file.name);
     const filesInDirectories = directories.map((directory) => getFiles(path + '/' + directory)).flat();
     return jsFiles.map((file) => resolve(__dirname, 'src', 'server', path + '/' + file)).concat(filesInDirectories);

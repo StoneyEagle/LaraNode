@@ -1,4 +1,4 @@
-import { Season } from '../season/season';
+import { Season } from './season';
 
 export interface SeasonTopRated {
 	page: number;

@@ -1,6 +1,6 @@
 import { Company } from '../company/company';
 import { Episode } from '../episode/episode';
-import { Network } from '../networks/network';
+import { Network } from '../networks/network.ts';
 import { Season } from '../season/season';
 import { ExternalIDS } from './external_ids';
 import { Recommendations } from './recommendations';
@@ -18,7 +18,7 @@ import { Genre } from '../shared/genre';
 import { Country } from '../shared/country';
 import { Similar } from '../shared/similar';
 import { TvAggregateCredits } from './aggregate_credits';
-'../shared/spokenLanguage';
+import { SpokenLanguage } from '../shared/spokenLanguage';
 
 export interface TvDetails extends TvShow {
 	adult?: boolean;

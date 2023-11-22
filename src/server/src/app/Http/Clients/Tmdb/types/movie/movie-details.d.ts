@@ -12,6 +12,7 @@ import { MovieReleaseDates } from './release_dates';
 import { Genre } from '../shared/genre';
 import { Country } from '../shared/country';
 import { AlternativeTitles } from '../tv/alternative_title';
+import { Language } from '../shared/language';
 '../shared/language';
 
 export interface MovieDetails extends Movie {

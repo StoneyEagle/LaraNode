@@ -1,7 +1,7 @@
 import { Episode } from '../episode/episode';
-import { ExternalIDS } from '../season/external_ids';
-import { SeasonImages } from '../season/images';
-import { Credits } from '../season/season-credits';
+import { ExternalIDS } from './external_ids';
+import { SeasonImages } from './images';
+import { Credits } from './season-credits';
 import { AggregateCredits } from './aggregate_credits';
 import { Season } from './season';
 import { SeasonTranslations } from './translations';

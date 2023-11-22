@@ -1,4 +1,4 @@
-import { Episode } from '../episode/episode';
+import { Episode } from './episode';
 import { Network } from '../networks/network';
 
 export interface EpisodeGroups {

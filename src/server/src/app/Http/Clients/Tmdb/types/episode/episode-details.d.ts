@@ -1,4 +1,4 @@
-import { EpisodeChanges } from '../episode/changes';
+import { EpisodeChanges } from './changes';
 import { Crew } from '../shared/crew';
 import { GuestStar } from '../shared/guest_star';
 import { Episode } from './episode';
