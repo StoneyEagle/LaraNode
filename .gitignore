@@ -2,5 +2,6 @@ node_modules
 .env
 out
 dist
-logs/app.log
+logs/*
 tmdb.d.ts
+yarn-error.log

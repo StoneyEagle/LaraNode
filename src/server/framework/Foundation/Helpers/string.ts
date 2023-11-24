@@ -143,5 +143,3 @@ String.prototype.toPascalCase = function (): string {
 String.prototype.toUcFirst = function (): string {
 	return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
 };
-
-export default {};

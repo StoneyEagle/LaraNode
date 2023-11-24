@@ -15,12 +15,10 @@ class RouteServiceProvider extends ServiceProvider {
     public static HOME = '/';
 
     public register(): void {
-        // console.log('RouteServiceProvider registered');
         super.register();
     }
 
     public boot(): this {
-        // console.log('RouteServiceProvider booted');
         this.express = this.registerRoutes(function () {
 
             Router.middleware('web')

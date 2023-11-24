@@ -5,6 +5,9 @@ export interface Token {
     expires_in: number;
     access_token: string;
     refresh_token: string;
+    refresh_expires_in: number;
+    session_state: string;
+    scope: string;
 }
 
 export interface IDToken {

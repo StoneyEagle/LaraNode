@@ -7,12 +7,10 @@ class LanguageServiceProvider extends ServiceProvider {
     }
 
     public register(): void {
-        // console.log('LanguageServiceProvider registered');
         super.register();
     }
 
     public boot(): void {
-        // console.log('LanguageServiceProvider booted');
         super.boot();
     }
 }

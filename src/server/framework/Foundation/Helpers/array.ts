@@ -18,8 +18,6 @@ export const groupBy = <T>(array: T[], key: string) => {
 globalThis.groupBy = groupBy;
 export type GroupBy = typeof groupBy;
 
-export default {};
-
 /**
  * * Return only unique objects by key,
  * @param {Array} array Array

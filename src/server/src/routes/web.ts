@@ -12,6 +12,16 @@ Route.get('/', function () {
 
 Route.get('/test', async function () {
 
+    // const acoustic = new AcoustId();
+    // const releaseGroup = await acoustic.byFingerPrint('M:\\Music\\A\\Akon\\[2008] Freedom\\02 Beautiful [Akon feat. Colby O\'Donis & Kardinal Offishall].mp3');
+
+    // return send(releaseGroup);
+
+    // const music = new Musicbrainz();
+    // const releaseGroup = await music.releaseGroup('70664047-2545-4e46-b75f-4556f2a7b83e');
+
+    // return send(releaseGroup);
+
     // const music = new FanartMusic();
     // const artist = await music.artist('f4a31f0a-51dd-4fa7-986d-3095c40c5ed9');
 

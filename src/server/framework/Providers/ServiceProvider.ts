@@ -1,14 +1,32 @@
+import Logger from "@framework/Foundation/Logger";
 
 class ServiceProvider {
     public static class: string = `${this.getFilePath()}`;
     providers: string[] = [];
 
-    constructor() {
-        // this.register();
-        // this.boot();
-    }
-
     public register(): void {
+        process
+            .on('unhandledRejection', (reason: Object, p) => {
+                if(Object.values(reason)[1] == 'ERR_ABORTED' || Object.values(reason).includes('cert')) {
+                    return;
+                }
+                console.log(reason);
+                Logger.error({
+                    level: 'error',
+                    name: 'unhandledRejection',
+                    color: 'red',
+                    message: reason,
+                });
+            })
+            .on('uncaughtException', (err) => {
+                Logger.error({
+                    level: 'error',
+                    name: 'uncaughtException',
+                    color: 'red',
+                    message: err,
+                });
+            });
+    
         // console.log('Provider registered');
     }
 

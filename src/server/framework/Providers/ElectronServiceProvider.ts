@@ -1,8 +1,8 @@
 
-// import { resolve } from "path";
 import ServiceProvider from "./ServiceProvider";
 import Electron from "@framework/Server/Electron";
 import icon from "@/assets/icon.png?asset";
+import DetectBrowsers from '@framework/Foundation/Helpers/detectBrowsers';
 
 class ElectronServiceProvider extends ServiceProvider {
     public static class: string = this.getFilePath();
@@ -15,11 +15,10 @@ class ElectronServiceProvider extends ServiceProvider {
     }
 
     public register(): void {
-        // console.log('ElectronServiceProvider registered');
     }
 
     public boot(): void {
-        // console.log('ElectronServiceProvider booted');
+        if(!DetectBrowsers()) return;
 
         this.electron = new Electron({
             icon: icon,
@@ -28,7 +27,6 @@ class ElectronServiceProvider extends ServiceProvider {
         globalThis.electron = this.electron;
 
         this.electron.make();
-
     }
 
     protected static getFilePath(): string {

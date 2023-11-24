@@ -8,12 +8,10 @@ class ElectronServiceProvider extends ServiceProvider {
     }
 
     public register(): void {
-        console.log('ElectronServiceProvider registered');
         super.register();
     }
 
     public boot(): void {
-        console.log('ElectronServiceProvider booted');
         super.boot();
     }
 }

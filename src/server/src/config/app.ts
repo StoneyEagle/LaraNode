@@ -1,7 +1,9 @@
 import ServiceProvider from "@framework/Providers/ServiceProvider";
-import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
+import AppServiceProvider from "@/app/Providers/AppServiceProvider";
 import AuthServiceProvider from "@/app/Providers/AuthServiceProvider";
 import LanguageServiceProvider from "@/app/Providers/LanguageServiceProvider";
+import NetworkServiceProvider from "@/app/Providers/NetworkServiceProvider";
+import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
 import ElectronServiceProvider from "@/app/Providers/ElectronServiceProvider";
 
 export default {
@@ -23,8 +25,10 @@ export default {
     cipher: 'AES-256-CBC',
 
     providers: ServiceProvider.defaultProviders().merge([
+        AppServiceProvider.class,
         AuthServiceProvider.class,
         LanguageServiceProvider.class,
+        NetworkServiceProvider.class,
         RouteServiceProvider.class,
         ElectronServiceProvider.class,
     ]),

@@ -1,19 +1,20 @@
 import winston from 'winston';
 import chalk from 'chalk';
+import { logLevelEnums } from '@/app/Helper/paths';
 
 class Logger {
     fileLogger: winston.transports.FileTransportInstance;
     consoleLogger: winston.transports.ConsoleTransportInstance;
-    myCustomLevels = {
-        error: 0,
-        warn: 1,
-        info: 2,
-        http: 3,
-        verbose: 4,
-        debug: 5,
-        silly: 6,
-        socket: 3,
-        cyan: 2,
+
+    myCustomLevels: { [key: string]: logLevelEnums } = {
+        error: logLevelEnums.error,
+        warn: logLevelEnums.warn,
+        info: logLevelEnums.info,
+        http: logLevelEnums.http,
+        verbose: logLevelEnums.verbose,
+        debug: logLevelEnums.debug,
+        silly: logLevelEnums.silly,
+        socket: logLevelEnums.socket,
     };
 
     constructor() {

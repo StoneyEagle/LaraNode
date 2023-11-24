@@ -1,3 +1,4 @@
+import AppServiceProvider from "@/app/Providers/AppServiceProvider";
 import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
 import AuthServiceProvider from "@framework/Providers/AuthServiceProvider";
 import ElectronServiceProvider from "@framework/Providers/ElectronServiceProvider";
@@ -22,6 +23,7 @@ class Application {
 export type App = _Application;
 
 class _Application {
+    AppServiceProvider = <AppServiceProvider>{};
     AuthServiceProvider = <AuthServiceProvider>{};
     LanguageServiceProvider = <LanguageServiceProvider>{};
     RouteServiceProvider = <RouteServiceProvider>{};

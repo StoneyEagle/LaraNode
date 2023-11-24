@@ -206,6 +206,3 @@ const promiseQueue = new Queue({
 });
 export type PromiseQueue = typeof promiseQueue;
 globalThis.promiseQueue = promiseQueue;
-
-
-export default {};
