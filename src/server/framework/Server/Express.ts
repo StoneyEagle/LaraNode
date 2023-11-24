@@ -4,8 +4,9 @@ import http from 'http';
 import https from 'https';
 import Router from '@framework/Routing/Router';
 import compression from 'compression';
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { groupBy } from '@framework/Foundation/Helpers/array';
+import { deviceId } from '@/app/Helper/system';
 
 export type Method = keyof typeof MethodEnum;
 export enum MethodEnum {
@@ -59,17 +60,21 @@ class Express {
     }
 
     make_HttpServer() {
+        process.env.SERVER_HOST = `http://${globalThis.internalIp}:${this.port}`;
+
         this.server = http.createServer(this.app);
         return this;
     }
 
-    make_HttpsServer(sslKey: string, sslCert: string, sslCA: string, allowHTTP1: boolean = true) {
+    make_HttpsServer({ key, cert, ca, allowHTTP1 = true }: { key: string, cert: string, ca: string, allowHTTP1: boolean }) {
         const credentials = {
-            key: readFileSync(sslKey, 'utf-8'),
-            cert: readFileSync(sslCert, 'utf-8'),
-            ca: readFileSync(sslCA, 'utf-8'),
+            key: readFileSync(key, 'utf-8'),
+            cert: readFileSync(cert, 'utf-8'),
+            ca: readFileSync(ca, 'utf-8'),
             allowHTTP1: allowHTTP1,
         };
+
+        process.env.SERVER_HOST = `https://${globalThis.internalIp.replace(/\./g, '-')}.${deviceId}.nomercy.tv:${this.port}`;
 
         this.server = https.createServer(credentials, this.app);
 
@@ -91,10 +96,14 @@ class Express {
         if (!this.server) {
             throw new Error('Server is not defined!');
         }
-        this.server.listen(this.port, this.ip, () => {
-            console.log(`Server listening on ip: ${this.ip} and port: ${this.port}!`);
+        return new Promise((resolve, reject) => {
+            this.server!.listen(this.port, this.ip, () => {
+                this.running(this.isHttps);
+                resolve(this);
+            }).on('error', (err) => {
+                reject(err);
+            });
         });
-        return this;
     }
 
     stopServer(cb: (err?: Error | undefined) => void) {
@@ -176,13 +185,18 @@ class Express {
             group: string | undefined,
             route: string,
             status: 'success' | 'failed',
+            duration: string,
         }[] = [];
 
-        let request;
+        let request: <T = any, R = AxiosResponse<T, any>, D = any>(url: string, config?: AxiosRequestConfig<D> | undefined) => Promise<R>;
+
+        const startTimer = Date.now();
 
         for (const route of this.routes) {
 
-            const url = `${this.isHttps ? 'https' : 'http'}://localhost:${this.port}${route.path}`;
+            const interval = Date.now();
+
+            const url = `${process.env.INTERNAL_DOMAIN}/${route.path}`;
             console.log(`Testing ${route.method.toUpperCase()} ${url}`);
 
             if (route.method == 'get') {
@@ -210,28 +224,38 @@ class Express {
                         group: route.group,
                         route: route.path,
                         status: 'success',
+                        duration: `${Date.now() - interval}ms`,
                     });
                 }).catch(({ request }) => {
 
-                    if (request.res?.statusCode == 401 || request.res?.statusCode == 403 || request.res.url == '') {
+                    if (request.res?.statusCode == 401 || request.res?.statusCode == 403 || request.res?.url == '') {
                         result.push({
                             method: route.method,
                             group: route.group,
                             route: route.path,
-                            status: 'success'
+                            status: 'success',
+                            duration: `${Date.now() - interval}ms`,
                         });
                     } else {
                         result.push({
                             method: route.method,
                             group: route.group,
                             route: route.path,
-                            status: 'failed'
+                            status: 'failed',
+                            duration: `${Date.now() - interval}ms`,
                         });
                     }
                 });
         }
+        
+        result.push({
+            method: 'all',
+            group: '',
+            route: `Successfully tested ${result.filter((r) => r.status == 'success').length} routes!`,
+            status: 'success',
+            duration: `${Date.now() - startTimer}ms`,
+        });
 
-        console.table(`Successfully tested ${result.filter((r) => r.status == 'success').length} routes!`);
         console.table(result);
     }
 
@@ -323,6 +347,10 @@ class Express {
 
     static auth() {
 
+    }
+
+    public running(secure: boolean = false) {
+        console.log(`Server listening on ip: ${this.ip} and port: ${this.port}!`);
     }
 
 }

@@ -41,7 +41,6 @@ Route.get('/test', async function () {
 
     // return send(await discover.movie({
     //     params: {
-    //         language: 'nl-NL',
     //     }
     // }));
 

@@ -1,6 +1,8 @@
 import ServiceProvider from "./ServiceProvider";
 import Express from "../Server/Express";
 import Router from "@framework/Routing/Router";
+import { sslCA, sslCert, sslKey } from "@/app/Helper/paths";
+import { resolve } from "path";
 
 class RouteServiceProvider extends ServiceProvider {
     public static class: string = this.getFilePath();
@@ -14,37 +16,30 @@ class RouteServiceProvider extends ServiceProvider {
     public static HOME = '/';
 
     public register(): void {
-        // console.log('RouteServiceProvider registered');
+        this.registerRoutes(function () { });
     }
 
     public boot(): void {
-        // console.log('RouteServiceProvider booted');
-        this.registerRoutes(function () { });
     }
 
     registerRoutes(arg0: () => void): Express {
         arg0();
 
         this.express = new Express();
+        this.express.running = this.running
 
-        this.express.make_HttpServer();
+        this.express.make_HttpsServer({
+			key: resolve(sslKey),
+			cert: resolve(sslCert),
+			ca: resolve(sslCA),
+			allowHTTP1: true,
+        });
         this.express.addRoutes(Router.routerList());
-        this.express.startServer();
 
         return this.express;
     }
 
-    protected static getFilePath(): string {
-        const nodeModule = this.getNodeModule();
-        return (nodeModule) ? nodeModule.filename : "";
-    }
-
-    protected static getNodeModule(): NodeModule | undefined {
-        const nodeModule = Object.values(require.cache)
-            .filter((mn) => mn?.filename.includes(this.name))
-            .shift();
-        return nodeModule;
-    }
+    public running() {}
 
 }
 

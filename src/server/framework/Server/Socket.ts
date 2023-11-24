@@ -1,3 +1,4 @@
+import Logger from '@framework/Foundation/Logger';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { Server as _Server, Socket as SocketType, ServerOptions } from 'socket.io';
 import socketioJwt from 'socketio-jwt';
@@ -22,13 +23,14 @@ export default new Socket();
 
 class _Socket {
     public_key: string = '';
+    io: _Server = <_Server>{};
 
     constructor() {
 
     }
 
     makeServer(server: Server<typeof IncomingMessage, typeof ServerResponse> | Server<typeof IncomingMessage, typeof ServerResponse> | undefined, config: Partial<ServerOptions>) {
-        io = new _Server(server, {
+        this.io = new _Server(server, {
             ...config,
             cors: {
                 allowedHeaders: [
@@ -80,14 +82,19 @@ class _Socket {
             },
         });
 
-        console.log('Socket server started');
+        Logger.log({
+            level: 'info',
+            name: 'socket',
+            color: 'magenta',
+            message:'Socket server attached to express server'
+        });
 
         this.applyMiddlewares();
         this.handle();
     }
 
     applyMiddlewares() {
-        io.use(
+        this.io.use(
             socketioJwt.authorize({
                 secret: this.public_key,
                 handshake: true,
@@ -97,11 +104,11 @@ class _Socket {
     }
 
     handle() {
-        io.once('connection', (socket: SocketType) => {
+        this.io.once('connection', (socket: SocketType) => {
             this.connectedOnce(socket);
         });
 
-        io.on('connection', (socket: SocketType) => {
+        this.io.on('connection', (socket: SocketType) => {
             this.connected(socket);
         });
     }

@@ -137,15 +137,14 @@ export const serverName = (): string => {
 export type ServerName = typeof serverName;
 globalThis.serverName = serverName;
 
-let _serverHost: string = process.env.SERVER_HOST ? process.env.SERVER_HOST : 'http://localhost';
 export const serverHost = (): string => {
-	return _serverHost as string;
+	return process.env.SERVER_HOST ? process.env.SERVER_HOST : 'http://localhost';
 };
 export type ServerHost = typeof serverHost;
 globalThis.serverHost = serverHost;
 
 export const setServerUrl = (url: string) => {
-	_serverHost = url;
+	process.env.SERVER_HOST = url;
 };
 
 let _serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;

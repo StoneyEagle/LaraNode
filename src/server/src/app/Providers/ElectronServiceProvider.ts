@@ -2,8 +2,12 @@
 import ServiceProvider from '@framework/Providers/ElectronServiceProvider';
 
 class ElectronServiceProvider extends ServiceProvider {
+
     constructor() {
         super();
+
+        this.title = 'NoMercy Media Server';
+        this.tooltip = this.title;
         this.open = false;
     }
 

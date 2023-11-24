@@ -9,6 +9,8 @@ class ElectronServiceProvider extends ServiceProvider {
 
     electron: Electron | undefined;
     open: boolean = true;
+    title: string = '';
+    tooltip: string = '';
 
     constructor() {
         super();
@@ -23,22 +25,12 @@ class ElectronServiceProvider extends ServiceProvider {
         this.electron = new Electron({
             icon: icon,
             open: this.open,
+            title: this.title,
+            tooltip: this.tooltip,
         });
         globalThis.electron = this.electron;
 
         this.electron.make();
-    }
-
-    protected static getFilePath(): string {
-        const nodeModule = this.getNodeModule();
-        return (nodeModule) ? nodeModule.filename : "";
-    }
-
-    protected static getNodeModule(): NodeModule | undefined {
-        const nodeModule = Object.values(require.cache)
-            .filter((mn) => mn?.filename.includes(this.name))
-            .shift();
-        return nodeModule;
     }
 }
 

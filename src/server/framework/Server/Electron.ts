@@ -1,6 +1,6 @@
 import { app, BrowserWindow, screen, shell, Tray, Menu, App, nativeImage } from "electron";
 import waitPort from "wait-port";
-
+        
 class Electron {
 
     mainWindow: BrowserWindow | undefined;
@@ -8,17 +8,19 @@ class Electron {
     tray: Tray | undefined;
 
     config: {
-        laravelUrl: string;
         host: string;
         port: number;
         icon: string;
         open: boolean;
+        title: string;
+        tooltip: string;
     } = {
-            laravelUrl: serverHost() + ':' + serverPort(),
             host: serverHost(),
             port: serverPort(),
             icon: '',
             open: true,
+            title: '',
+            tooltip: '',
         };
 
     constructor(config: Partial<Electron['config']>) {
@@ -26,6 +28,10 @@ class Electron {
     }
 
     make(): App {
+
+        app.commandLine.appendSwitch('disable-web-security');
+
+        app.setBadgeCount(10);
 
         app.whenReady().then(() => {
 
@@ -35,7 +41,8 @@ class Electron {
             waitPort({
                 path: '/routes',
                 host: this.config.host.replace(/https?:\/\//, ''),
-                port: this.config.port
+                port: this.config.port,
+                output: 'silent',
             })
                 .then(() => {
                     this.splash?.close();
@@ -64,15 +71,15 @@ class Electron {
         const { width } = primaryDisplay.workAreaSize;
 
         this.mainWindow = new BrowserWindow({
+            title: this.config.title,
             show: false,
-            title: 'NoMercy MediaServer',
             width: Math.floor(width / 1.2),
             height: Math.floor((width / 1.2) / 16 * 9),
             minWidth: 1320,
             minHeight: 860,
             resizable: true,
             maximizable: true,
-            roundedCorners: true,
+            roundedCorners: false,
             center: true,
             icon: this.config.icon,
             darkTheme: true,
@@ -85,9 +92,10 @@ class Electron {
                 contextIsolation: false,
                 autoplayPolicy: 'no-user-gesture-required',
                 webgl: true,
-                sandbox: false
+                sandbox: false,
+                webSecurity: false,
+                scrollBounce: true,
             },
-            ...(process.platform === 'linux' ? { icon: this.config.icon } : {}),
         });
 
         this.mainWindow.on('ready-to-show', () => {
@@ -110,7 +118,7 @@ class Electron {
             return false;
         });
 
-        this.mainWindow.loadURL(this.config.laravelUrl).then();
+        this.mainWindow.loadURL(this.config.host).then();
 
         return this;
     }
@@ -164,7 +172,7 @@ class Electron {
         ]);
         this.tray = new Tray(nativeImage.createFromPath(this.config.icon));
         this.tray.setContextMenu(trayMenu);
-        this.tray.setToolTip('NoMercy Media Server');
+        this.tray.setToolTip(this.config.tooltip);
 
         this.tray.on('click', () => {
             this.mainWindow?.show();

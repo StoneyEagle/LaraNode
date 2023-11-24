@@ -52,7 +52,7 @@ export default defineConfig(({ command }) => {
                         ? pkg.dependencies
                         : {}),
                 },
-            }
+            },
         },
         preload: {
             resolve: {

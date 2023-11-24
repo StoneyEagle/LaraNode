@@ -1,5 +1,5 @@
 import winston from 'winston';
-import chalk from 'chalk';
+import colors from "cli-color";
 import { logLevelEnums } from '@/app/Helper/paths';
 
 class Logger {
@@ -80,37 +80,37 @@ class Logger {
     color(color: string, msg: string) {
         switch (color) {
             case 'black':
-                return chalk.black(msg);
+                return colors.black(msg);
             case 'red':
-                return chalk.red(msg);
+                return colors.red(msg);
             case 'green':
-                return chalk.green(msg);
+                return colors.green(msg);
             case 'yellow':
-                return chalk.yellow(msg);
+                return colors.yellow(msg);
             case 'blue':
-                return chalk.blue(msg);
+                return colors.blue(msg);
             case 'magenta':
-                return chalk.magenta(msg);
+                return colors.magenta(msg);
             case 'cyan':
-                return chalk.cyan(msg);
+                return colors.cyan(msg);
             case 'blackBright':
-                return chalk.blackBright(msg);
+                return colors.blackBright(msg);
             case 'redBright':
-                return chalk.redBright(msg);
+                return colors.redBright(msg);
             case 'greenBright':
-                return chalk.greenBright(msg);
+                return colors.greenBright(msg);
             case 'yellowBright':
-                return chalk.yellowBright(msg);
+                return colors.yellowBright(msg);
             case 'blueBright':
-                return chalk.blueBright(msg);
+                return colors.blueBright(msg);
             case 'magentaBright':
-                return chalk.magentaBright(msg);
+                return colors.magentaBright(msg);
             case 'cyanBright':
-                return chalk.cyanBright(msg);
+                return colors.cyanBright(msg);
             case 'whiteBright':
-                return chalk.whiteBright(msg);
+                return colors.whiteBright(msg);
             default:
-                return chalk.white(msg);
+                return colors.white(msg);
         }
     };
 

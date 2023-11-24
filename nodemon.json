@@ -1,9 +1,9 @@
 {
   "watch": [
-    "src",
-    "framework"
+    "src/server/src",
+    "src/server/framework"
   ],
   "ext": ".ts",
   "ignore": [],
-  "exec": "node --max-old-space-size=20480 -- node_modules/ts-node/dist/bin --swc --pretty ./src/server/src/index.ts"
+  "exec": "node --loader ts-node/esm ./src/server/src/index.ts"
 }

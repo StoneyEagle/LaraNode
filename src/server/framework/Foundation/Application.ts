@@ -3,6 +3,7 @@ import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
 import AuthServiceProvider from "@framework/Providers/AuthServiceProvider";
 import ElectronServiceProvider from "@framework/Providers/ElectronServiceProvider";
 import LanguageServiceProvider from "@framework/Providers/LanguageServiceProvider";
+import colors from "cli-color";
 
 class Application {
     instance: _Application | undefined;
@@ -12,6 +13,8 @@ class Application {
         if (this.instance) {
             throw new Error('Application instance already exists');
         }
+        
+        process.stdout.write(colors.reset);
 
         this.instance = new _Application();
         globalThis.app = this.instance;
@@ -30,15 +33,23 @@ class _Application {
     ElectronServiceProvider = <ElectronServiceProvider>{};
 
     public constructor() {
-        (config('app.providers') as unknown as string[]).forEach((provider) => {
+        const providers = config('app.providers') as unknown as string[];
+
+        providers.forEach((provider) => {
             const Class = require(provider);
             const instance = new Class();
 
             instance.register();
-            instance.boot();
 
             this[Class.name] = instance;
         });
+
+        setTimeout(() => {
+            providers.forEach((provider) => {
+                const Class = require(provider);
+                this[Class.name].boot();
+            });
+        }, 1000);
     }
 
     restart() {
