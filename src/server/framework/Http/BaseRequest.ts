@@ -8,7 +8,7 @@ class BaseRequest {
     protected method: string = MethodEnum.get;
     protected baseUrl: string = "";
     protected url: string = "";
-    protected headers: { [key: string]: string|number|boolean|undefined } = {};
+    protected headers: { [key: string]: string | number | boolean | undefined; } = {};
     protected body: unknown = {};
     protected query: { [key: string]: unknown; } = {};
     protected params: { [key: string]: unknown; } = {};
@@ -88,17 +88,17 @@ class BaseRequest {
         return this;
     }
 
-    protected withHeaders(headers: { [key: string]: string|number|boolean|undefined }): this {
+    protected withHeaders(headers: { [key: string]: string | number | boolean | undefined; }): this {
         this.headers = { ...this.defaultHeaders(), ...this.headers, ...headers };
         return this;
     }
 
-    protected withParams(params: { [key: string]: string|number|boolean|undefined }): this {
+    protected withParams(params: { [key: string]: string | number | boolean | undefined; }): this {
         this.params = { ...this.params, ...params };
         return this;
     }
 
-    protected withQuery(query: { [key: string]: string|number|boolean|undefined }): this {
+    protected withQuery(query: { [key: string]: string | number | boolean | undefined; }): this {
         this.query = { ...this.query, ...query };
         return this;
     }
@@ -109,7 +109,7 @@ class BaseRequest {
     }
 
     // protected get(url: string): this {
-        
+
     //     this.method = MethodEnum.get;
     //     this.url = url;
     //     return this;

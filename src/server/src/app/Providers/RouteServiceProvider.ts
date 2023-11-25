@@ -16,7 +16,7 @@ class RouteServiceProvider extends ServiceProvider {
 
     public static HOME = '/';
 
-    public register(): void {
+    public async register(): Promise<void> {
         super.register();
 
         this.express = this.registerRoutes(function () {
@@ -35,36 +35,38 @@ class RouteServiceProvider extends ServiceProvider {
             Router.middleware('web')
                 .prefix('/api/v1/dashboard')
                 .group(base_path('routes/api/v1/dashboard'));
-                
+
             Router.middleware('web')
                 .prefix('/api/v1/music')
                 .group(base_path('routes/api/v1/music'));
         });
     }
 
-    public boot(): this {
-        
-        this.express.startServer()
-            .then(() => {
+    public async boot(): Promise<void> {
 
-                const io = Socket.make();
-                io.makeServer(this.express.server, {
-                    allowEIO3: true,
-                    path: '/socket',
-                    cors: {
-                        // origin: '*',
-                        origin: allowedOrigins,
-                        credentials: true,
-                        maxAge: 1000 * 60 * 60 * 30,
-                        optionsSuccessStatus: 200,
-                    },            
+        return new Promise((resolve, reject) => {
+
+            this.express.startServer()
+                .then(() => {
+
+                    const io = Socket.make();
+                    io.makeServer(this.express.server, {
+                        allowEIO3: true,
+                        path: '/socket',
+                        cors: {
+                            // origin: '*',
+                            origin: allowedOrigins,
+                            credentials: true,
+                            maxAge: 1000 * 60 * 60 * 30,
+                            optionsSuccessStatus: 200,
+                        },
+                    });
+
+                    // this.express.testRoutes();
+                    // this.express.showRoutes();
                 });
-
-                // this.express.testRoutes();
-                // this.express.showRoutes();
-            }); 
-        
-        return this;
+            resolve();
+        });
     }
 
     public running(secure: boolean = true) {
@@ -77,12 +79,12 @@ class RouteServiceProvider extends ServiceProvider {
 
         console.log(
             g(`╔══════════════════════════════════════════════╗\n`)
-            + g(`║ ${secure ? ' ' : ''}   ` +		gb(`${secure ? 'Secure' : 'Unsecure'} server running: on port: `	+		c3(`${serverPort()}`.replace(', ', '')	+		g(` ${secure ? ' ' : ''}   ║\n`))))
-            + g(`║  ${secure ? ' ' : ''}  ` +		cc(`visit: `							+ link(`https://app${process.env.ROUTE_SUFFIX ?? ''}.nomercy.tv`)					+		g(`${process.env.ROUTE_SUFFIX ? '' : '    '}  ${secure ? '' : ' '}      ║\n`))
-            + g(`╚══════════════════════════════════════════════╝`))
+            + g(`║ ${secure ? ' ' : ''}   ` + gb(`${secure ? 'Secure' : 'Unsecure'} server running: on port: ` + c3(`${serverPort()}`.replace(', ', '') + g(` ${secure ? ' ' : ''}   ║\n`))))
+            + g(`║  ${secure ? ' ' : ''}  ` + cc(`visit: ` + link(`https://app-dev.nomercy.tv`) + g(`     ${secure ? '' : ' '}   ║\n`))
+                + g(`╚══════════════════════════════════════════════╝`))
         );
 
-        if(secure){
+        if (secure) {
             process.env.INTERNAL_DOMAIN = `https://${globalThis.internalIp.replace(/\./g, '-')}.${deviceId}.nomercy.tv:${serverPort()}`;
             process.env.EXTERNAL_DOMAIN = `https://${globalThis.externalIp.replace(/\./g, '-')}.${deviceId}.nomercy.tv:${serverPort()}`;
             console.log(`Internal address: ${link(process.env.INTERNAL_DOMAIN)}`);

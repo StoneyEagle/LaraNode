@@ -29,7 +29,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param page - The page number of the results to fetch.
      * @returns A promise that resolves to a paginated response of movies.
      */
-    protected async _nowPlaying({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async _nowPlaying({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Now Playing Movies page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>(`${this.url}/now_playing`, {
@@ -45,7 +45,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param limit - The maximum number of movies to fetch. Defaults to 10.
      * @returns A promise that resolves to an array of Movie objects.
      */
-    public async nowPlaying({ limit = 10 }: { limit?: number } = {}) {
+    public async nowPlaying({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Now Playing Movies');
 
         return TmdbClient.paginatedResponse<TmdbMoviesLists, Movie>(this, '_nowPlaying', limit);
@@ -57,7 +57,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param {number} options.page - The page number to fetch.
      * @returns A promise that resolves to a paginated response of movies.
      */
-    protected async _popular({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async _popular({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Popular Movies page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>(`${this.url}/popular`, {
@@ -73,7 +73,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param limit - The maximum number of movies to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of Movie objects.
      */
-    public popular({ limit = 10 }: { limit?: number } = {}) {
+    public popular({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Popular Movies');
 
         return TmdbClient.paginatedResponse<TmdbMoviesLists, Movie>(this, 'popular', limit);
@@ -84,7 +84,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param {number} page - The page number to fetch.
      * @returns A promise that resolves to a paginated response of movies.
      */
-    protected async _topRated({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async _topRated({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Top Rated Movies page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>(`${this.url}/top_rated`, {
@@ -100,7 +100,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param limit - The maximum number of movies to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of Movie objects.
      */
-    public async topRated({ limit = 10 }: { limit?: number } = {}) {
+    public async topRated({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Top Rated Movies');
 
         return TmdbClient.paginatedResponse<TmdbMoviesLists, Movie>(this, '_topRated', limit);
@@ -127,7 +127,7 @@ class TmdbMoviesLists extends TmdbClient {
      * @param limit The maximum number of movies to fetch (default: 10).
      * @returns A Promise that resolves to an array of Movie objects.
      */
-    public async upcoming({ limit = 10 }: { limit?: number } = {}) {
+    public async upcoming({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Upcoming Movie');
 
         return TmdbClient.paginatedResponse<TmdbMoviesLists, Movie>(this, '_upcoming', limit);

@@ -1,8 +1,10 @@
+import { applicationPaths, configFile, tokenFile } from '../Helper/paths';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+
+import Auth from '../Utils/Auth';
+import ServiceProvider from '@framework/Providers/AuthServiceProvider';
 import axios from 'axios';
 import passportClient from 'laravel-passport-express';
-
-import ServiceProvider from '@framework/Providers/AuthServiceProvider';
-import Auth from '../Utils/Auth';
 
 class AuthServiceProvider extends ServiceProvider {
     public static baseUrl = 'https://dev.nomercy.tv';
@@ -11,7 +13,7 @@ class AuthServiceProvider extends ServiceProvider {
     private static passport: passportClient;
 
     private static public_key: string = '';
-    
+
     private static token_client_id: string = '';
     private static token_client_secret: string = '';
 
@@ -22,25 +24,29 @@ class AuthServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
-        super.register();
+    public async register(): Promise<void> {
+        await super.register();
 
-        AuthServiceProvider.getAuthKeys().then(() => {
+        this.createAppFolders();
+
+        await AuthServiceProvider.getAuthKeys().then(async () => {
             AuthServiceProvider.getPassport();
 
-            new Auth({
+            const auth = new Auth({
                 token_client_id: AuthServiceProvider.token_client_id,
-                token_client_secret: AuthServiceProvider.token_client_secret, 
+                token_client_secret: AuthServiceProvider.token_client_secret,
                 password_client_id: AuthServiceProvider.password_client_id,
                 password_client_secret: AuthServiceProvider.password_client_secret,
             });
+
+            await auth.refreshTokenLoop();
         });
     }
 
-    public boot(): void {
-        super.boot();
+    public async boot(): Promise<void> {
+        await super.boot();
     }
-    
+
     private static getPassport() {
         if (!AuthServiceProvider.passport) {
             AuthServiceProvider.passport = passportClient({
@@ -49,7 +55,7 @@ class AuthServiceProvider extends ServiceProvider {
                 clientSecret: AuthServiceProvider.token_client_secret
             });
         }
-        
+
         return AuthServiceProvider.passport;
     }
 
@@ -87,6 +93,19 @@ class AuthServiceProvider extends ServiceProvider {
         return AuthServiceProvider.getPassport().requestToken();
     };
 
+    private createAppFolders() {
+        for (let i = 0; i < Object.values(applicationPaths).length; i++) {
+            const path = Object.values(applicationPaths)[i];
+            mkdirSync(path, { recursive: true });
+        }
+
+        if (!existsSync(tokenFile)) {
+            writeFileSync(tokenFile, JSON.stringify({}));
+        }
+        if (!existsSync(configFile)) {
+            writeFileSync(configFile, JSON.stringify({}));
+        }
+    }
 }
 
 export default AuthServiceProvider;

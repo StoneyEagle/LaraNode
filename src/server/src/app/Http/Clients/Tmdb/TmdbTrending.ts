@@ -20,7 +20,7 @@ class TmdbTrending extends TmdbClient {
 
         this.url = 'trending';
     }
-    
+
     /**
      * Fetches the trending all for a given time window and page number.
      * @param window The time window for which to fetch the trending all. Can be 'day' or 'week'.
@@ -45,12 +45,12 @@ class TmdbTrending extends TmdbClient {
      * @param limit The maximum number of all to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of All objects.
      */
-    public async all({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number } = {}) {
+    public async all({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number; } = {}) {
         TmdbClient.info('Fetching Trending All');
 
-        return TmdbClient.paginatedResponse<TmdbTrending, TrendingCombined>(this, '_all', limit, {window});
+        return TmdbClient.paginatedResponse<TmdbTrending, TrendingCombined>(this, '_all', limit, { window });
     };
-    
+
     /**
      * Fetches the trending movies for a given time window and page number.
      * @param window The time window for which to fetch the trending movies. Can be 'day' or 'week'.
@@ -75,12 +75,12 @@ class TmdbTrending extends TmdbClient {
      * @param limit The maximum number of movies to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of Movie objects.
      */
-    public async movie({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number } = {}) {
+    public async movie({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number; } = {}) {
         TmdbClient.info('Fetching Trending Movies');
 
-        return TmdbClient.paginatedResponse<TmdbTrending, TrendingMovies>(this, '_movie', limit, {window});
+        return TmdbClient.paginatedResponse<TmdbTrending, TrendingMovies>(this, '_movie', limit, { window });
     };
-    
+
     /**
      * Fetches a paginated list of trending People.
      * @param window The time window to retrieve trending People for. Can be either 'day' or 'week'. Defaults to 'day'.
@@ -105,10 +105,10 @@ class TmdbTrending extends TmdbClient {
      * @param limit The maximum number of People to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of Person objects.
      */
-    public async people({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number } = {}) {
+    public async people({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number; } = {}) {
         TmdbClient.info('Fetching Trending People');
 
-        return TmdbClient.paginatedResponse<TmdbTrending, TrendingPeople>(this, '_people', limit, {window});
+        return TmdbClient.paginatedResponse<TmdbTrending, TrendingPeople>(this, '_people', limit, { window });
     };
 
     /**
@@ -135,10 +135,10 @@ class TmdbTrending extends TmdbClient {
      * @param limit The maximum number of Tv Shows to fetch. Defaults to 10.
      * @returns A Promise that resolves to an array of TvShow objects.
      */
-    public async tv({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number } = {}) {
+    public async tv({ window = 'day', limit = 10 }: { window?: 'day' | 'week', limit?: number; } = {}) {
         TmdbClient.info('Fetching Trending TV Shows');
 
-        return TmdbClient.paginatedResponse<TmdbTrending, TrendingTvShows>(this, '_tv', limit, {window});
+        return TmdbClient.paginatedResponse<TmdbTrending, TrendingTvShows>(this, '_tv', limit, { window });
     };
 
 };

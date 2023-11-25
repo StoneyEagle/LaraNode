@@ -28,7 +28,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param page The page number to fetch.
      * @returns A promise that resolves to a paginated response of TV shows.
      */
-    protected async _onTheAir({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _onTheAir({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching Now Airing TV Shows page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/on_the_air`, {
@@ -44,7 +44,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param limit - The maximum number of Tv Shows to fetch. Defaults to 10.
      * @returns A promise that resolves to an array of Tv objects.
      */
-    public async onTheAir({ limit = 10 }: { limit?: number } = {}) {
+    public async onTheAir({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Now Airing TV Shows');
 
         return TmdbClient.paginatedResponse<TmdbTvSeriesLists, TvShow>(this, '_onTheAir', limit);
@@ -56,7 +56,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param {number} options.page - The page number to fetch.
      * @returns {Promise<PaginatedResponse<TvShow>>} A promise that resolves to a paginated response of TV shows.
      */
-    protected async _popular({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _popular({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching Popular TV Shows page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/popular`, {
@@ -72,7 +72,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param limit - The maximum number of Tv Shows to fetch. Defaults to 10.
      * @returns An array of popular Tv Shows.
      */
-    public popular({ limit = 10 }: { limit?: number } = {}) {
+    public popular({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Popular TV Shows');
 
         return TmdbClient.paginatedResponse<TmdbTvSeriesLists, TvShow>(this, '_popular', limit);
@@ -83,7 +83,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param {number} page - The page number to fetch.
      * @returns {Promise<PaginatedResponse<TvShow>>} A promise that resolves to a paginated response of TV shows.
      */
-    protected async _topRated({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _topRated({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching Top Rated TV Shows page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/top_rated`, {
@@ -99,7 +99,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param limit - The maximum number of Tv Shows to fetch. Defaults to 10.
      * @returns An array of TvShow objects representing the top rated Tv Shows.
      */
-    public async topRated({ limit = 10 }: { limit?: number } = {}) {
+    public async topRated({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Top Rated TV Shows');
 
         return TmdbClient.paginatedResponse<TmdbTvSeriesLists, TvShow>(this, '_topRated', limit);
@@ -126,7 +126,7 @@ class TmdbTvSeriesLists extends TmdbClient {
      * @param limit The maximum number of Tv Shows to fetch (default: 10).
      * @returns A Promise that resolves to an array of TvShow objects.
      */
-    public async airingToday({ limit = 10 }: { limit?: number } = {}) {
+    public async airingToday({ limit = 10 }: { limit?: number; } = {}) {
         TmdbClient.info('Fetching Today Airing TV Shows');
 
         return TmdbClient.paginatedResponse<TmdbTvSeriesLists, TvShow>(this, '_airingToday', limit);

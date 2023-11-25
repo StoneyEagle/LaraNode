@@ -1,9 +1,9 @@
 import ServiceProvider from "@framework/Providers/ServiceProvider";
+import NetworkServiceProvider from "@/app/Providers/NetworkServiceProvider";
 import AppServiceProvider from "@/app/Providers/AppServiceProvider";
 import AuthServiceProvider from "@/app/Providers/AuthServiceProvider";
 import LanguageServiceProvider from "@/app/Providers/LanguageServiceProvider";
 import RouteServiceProvider from "@/app/Providers/RouteServiceProvider";
-import NetworkServiceProvider from "@/app/Providers/NetworkServiceProvider";
 import ElectronServiceProvider from "@/app/Providers/ElectronServiceProvider";
 
 export default {
@@ -26,10 +26,10 @@ export default {
 
     providers: ServiceProvider.defaultProviders().merge([
         NetworkServiceProvider.class,
-        AppServiceProvider.class,
         AuthServiceProvider.class,
+        AppServiceProvider.class,
         LanguageServiceProvider.class,
-        ElectronServiceProvider.class,
         RouteServiceProvider.class,
+        ElectronServiceProvider.class,
     ]),
 };

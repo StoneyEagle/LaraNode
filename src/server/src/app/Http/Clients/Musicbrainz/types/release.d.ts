@@ -30,13 +30,13 @@ export interface CoverArtArchive {
 }
 
 export interface ReleaseEvent {
-	area: null;
-	date: Date;
+    area: null;
+    date: Date;
 }
 
 export interface TextRepresentation {
-	language: string;
-	script: string;
+    language: string;
+    script: string;
 }
 
 export interface ArtistCredit {

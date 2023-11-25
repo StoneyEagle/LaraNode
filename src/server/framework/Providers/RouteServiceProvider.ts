@@ -15,31 +15,31 @@ class RouteServiceProvider extends ServiceProvider {
 
     public static HOME = '/';
 
-    public register(): void {
-        this.registerRoutes(function () { });
+    public async register(): Promise<void> {
     }
 
-    public boot(): void {
+    public async boot(): Promise<void> {
+        this.registerRoutes(function () { });
     }
 
     registerRoutes(arg0: () => void): Express {
         arg0();
 
         this.express = new Express();
-        this.express.running = this.running
+        this.express.running = this.running;
 
         this.express.make_HttpsServer({
-			key: resolve(sslKey),
-			cert: resolve(sslCert),
-			ca: resolve(sslCA),
-			allowHTTP1: true,
+            key: resolve(sslKey),
+            cert: resolve(sslCert),
+            ca: resolve(sslCA),
+            allowHTTP1: true,
         });
         this.express.addRoutes(Router.routerList());
 
         return this.express;
     }
 
-    public running() {}
+    public running() { }
 
 }
 

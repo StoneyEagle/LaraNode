@@ -19,8 +19,8 @@ asarUnpack:
 extraResources:
   - from: out/main/package.json.js
     to: app/out/main/package.json.js
-  - from: out/main/resources/**/*
-    to: app/out/main/resources/**/*
+  # - from: out/main/resources/**/*
+  #   to: app/out/main/resources/**/*
 
 icon: resources/icon.png
 

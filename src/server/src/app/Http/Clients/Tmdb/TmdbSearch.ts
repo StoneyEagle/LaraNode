@@ -10,7 +10,7 @@ import type { Person } from "./types/people/person";
 import type { TvShow } from "./types/tv/tv";
 
 interface TmdbSearchInterface {
-    searchQuery: string
+    searchQuery: string;
     year?: number | null;
     filterOVAs?: boolean;
     filterMakingOfs?: boolean;
@@ -42,7 +42,7 @@ class TmdbSearch extends TmdbClient {
 
         this.filterOVAs = filterOVAs;
         this.filterMakingOfs = filterMakingOfs;
-        
+
         if (!this.searchQuery) {
             TmdbClient.error('No this.query given');
             throw new Error('No this.query given');
@@ -57,14 +57,14 @@ class TmdbSearch extends TmdbClient {
      */
     private sanitizeQuery = (query: string): string => {
 
-        if(query.includes(this.year?.toString() ?? '')) {
+        if (query.includes(this.year?.toString() ?? '')) {
             query = query.replace(this.year?.toString() ?? '', '');
         }
 
         return query.replace(/[\s\.]{1,}and[\s\.]{1,}/u, '&')
             .split('.(')[0].replace(/([a-z])\./gu, '$1 ')
             .replace(/([A-Z])\.([A-Z][^A-Z.])/gu, '$1 $2');
-    }
+    };
 
     /**
      * Filters the given array of items based on the current filter options.
@@ -89,9 +89,9 @@ class TmdbSearch extends TmdbClient {
      * @returns The filtered array of movies or TV shows.
      */
     private filterOVA<T>(result: T[]): T[] {
-        if((result as Movie[])[0].title) {
+        if ((result as Movie[])[0].title) {
             return (result as Movie[]).filter(d => !d.title.includes('OVA') || !d.title.includes('ova')) as T[];
-        } else if((result as TvShow[])[0].name) {
+        } else if ((result as TvShow[])[0].name) {
             return (result as TvShow[]).filter(d => !d.name.includes('OVA') || !d.name.includes('ova')) as T[];
         } else {
             return result;
@@ -104,9 +104,9 @@ class TmdbSearch extends TmdbClient {
      * @returns The filtered array of movies or TV shows.
      */
     private filterMakingOf<T>(result: T[]): T[] {
-        if((result as Movie[])[0].title) {
+        if ((result as Movie[])[0].title) {
             return (result as Movie[]).filter(d => !d.title.includes('Making of') || !d.title.includes('making of')) as T[];
-        } else if((result as TvShow[])[0].name) {
+        } else if ((result as TvShow[])[0].name) {
             return (result as TvShow[]).filter(d => !d.name.includes('Making of') || !d.name.includes('making of')) as T[];
         } else {
             return result;

@@ -96,7 +96,7 @@ export type ReleaseQuality = 'normal';  // ToDo
 
 export interface Release extends Entity {
   title: string;
-  'text-representation': { 'language': string, 'script': string },
+  'text-representation': { 'language': string, 'script': string; },
   disambiguation: string;
   asin: string,
   'status-id': string;
@@ -134,7 +134,7 @@ export interface Recording extends Entity {
   aliases?: Alias[];
 }
 
-export interface Track extends Entity{
+export interface Track extends Entity {
   position: number;
   recording: Recording;
   'number': string; // in JSON, this is a string field
@@ -171,7 +171,7 @@ export interface ReleaseGroup extends Entity {
   'primary-type-id'?: string,
   'secondary-type-ids'?: string[],
   'sort-name': string;
-  'artist-credit': { artist: Artist, name: string, joinphrase: string }[];
+  'artist-credit': { artist: Artist, name: string, joinphrase: string; }[];
   releases?: Release[]; // include 'releases'
 }
 
@@ -217,7 +217,7 @@ export interface UrlList extends SearchResult {
 export type RelationDirection = 'backward' | 'forward';
 
 export interface Relation {
-  'attribute-ids':any;
+  'attribute-ids': any;
   direction: RelationDirection;
   'target-credit': string;
   end: null | unknown;
@@ -286,31 +286,31 @@ export interface ReleaseSearchResult extends SearchResult {
  * https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Subqueries
  */
 export type EntityType = 'area' |
-'artist' |
-'collection' |
-'event' |
-'instrument' |
-'label' |
-'place' |
-'recording' |
-'release' |
-'release-group' |
-'series' |
-'work' |
-'url';
+  'artist' |
+  'collection' |
+  'event' |
+  'instrument' |
+  'label' |
+  'place' |
+  'recording' |
+  'release' |
+  'release-group' |
+  'series' |
+  'work' |
+  'url';
 
 export type Relationships = 'area-rels' |
-'artist-rels' |
-'event-rels' |
-'instrument-rels' |
-'label-rels' |
-'place-rels' |
-'recording-rels' |
-'release-rels' |
-'release-group-rels' |
-'series-rels' |
-'url-rels' |
-'work-rels';
+  'artist-rels' |
+  'event-rels' |
+  'instrument-rels' |
+  'label-rels' |
+  'place-rels' |
+  'recording-rels' |
+  'release-rels' |
+  'release-group-rels' |
+  'series-rels' |
+  'url-rels' |
+  'work-rels';
 
 export enum LinkType {
   license = 302,
@@ -347,7 +347,7 @@ export interface SearchQuery<I extends string> extends Pagination {
    * Lucene search query, this is mandatory
    */
   query?: string | FormData,
-  inc?: I[]
+  inc?: I[];
 }
 
 /**

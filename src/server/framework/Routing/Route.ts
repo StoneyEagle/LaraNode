@@ -5,17 +5,17 @@ import { Method, MethodEnum } from '@framework/Server/Express';
 import { Worker } from 'worker_threads';
 
 type MyResponse = {
-    json: (value: string|Object, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
+    json: (value: string | Object, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
     send: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
     view: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
     redirect: (value: string, headers?: Headers) => void | Response | Response<unknown, Record<string, unknown>>;
     status: (value: number) => typeof Route;
 };
 
-type ActionType = string 
-    | typeof BaseController 
+type ActionType = string
+    | typeof BaseController
     | (({ req, res, next, response }: { req: Request, res: Response, next: NextFunction, response: MyResponse; }) => Response)
-    | ((arg: unknown) => Route)
+    | ((arg: unknown) => Route);
 
 type Action = {
     req: Request,
@@ -24,10 +24,10 @@ type Action = {
     response: MyResponse;
 };
 
-type SendResonse = 
-    | { type: 'json'|'send'; data: string|Object; headers?: Headers; }
-    | { type: 'view'|'redirect'; data: string; headers?: Headers; }
-    | { type: 'status'; data: number; headers?: Headers; }
+type SendResonse =
+    | { type: 'json' | 'send'; data: string | Object; headers?: Headers; }
+    | { type: 'view' | 'redirect'; data: string; headers?: Headers; }
+    | { type: 'status'; data: number; headers?: Headers; };
 
 class Route extends Router {
 
@@ -58,10 +58,10 @@ class Route extends Router {
         }
     }
 
-    sendResponse(res: Response, response: SendResonse){
+    sendResponse(res: Response, response: SendResonse) {
 
-        if(!response) return res.sendStatus(404);
-        
+        if (!response) return res.sendStatus(404);
+
         if (response.type === 'view') {
             if (response.data.includes('<') && response.data.includes('</')) {
                 return res.header(response.headers).send(response.data);
@@ -100,14 +100,14 @@ class Route extends Router {
                         console.log(exec, action);
                     }
                 });
-                
+
             } catch (error) {
-                const exec = new (require(controller));                       
+                const exec = new (require(controller));
                 return resolve(exec[action]());
             }
         });
     }
-    
+
     runCallback(callback: () => SendResonse): Promise<SendResonse> {
         return new Promise((resolve, reject) => {
             try {
@@ -123,7 +123,7 @@ class Route extends Router {
                 worker.once('error', (error) => {
                     return resolve(callback());
                 });
-                
+
             } catch (error) {
                 return resolve(callback());
             }
@@ -133,7 +133,7 @@ class Route extends Router {
 
     public static response(res: Response): MyResponse {
         return {
-            json: (value: Object|String, headers?: Headers) => {
+            json: (value: Object | String, headers?: Headers) => {
                 return res.header(headers).json(value);
             },
             send: (value: string, headers?: Headers) => {
@@ -161,7 +161,7 @@ class Route extends Router {
     getMethod(): Method {
         return this._method;
     }
-    
+
     getName() {
         return this._name;
     }

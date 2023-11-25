@@ -101,4 +101,4 @@ export type WorkIncludes = MiscIncludes | RelationsIncludes;
 
 export type UrlIncludes = RelationsIncludes;
 
-export type FormData = {[key: string]: string | number};
+export type FormData = { [key: string]: string | number; };

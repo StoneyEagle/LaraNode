@@ -147,7 +147,7 @@ export const setServerUrl = (url: string) => {
 	process.env.SERVER_HOST = url;
 };
 
-let _serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+let _serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 7635;
 export const serverPort = (): number => {
 	return _serverPort as number;
 };

@@ -27,7 +27,7 @@ class TmdbConfiguration extends TmdbClient {
 
         this.url = `configuration`;
     }
-        
+
     public async configuration() {
         const { data } = await this.get<Configuration>('configuration');
 

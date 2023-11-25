@@ -18,13 +18,13 @@ class NetworkServiceProvider extends ServiceProvider {
         });
     }
 
-    public register(): void {
+    public async register(): Promise<void> {
     }
 
-    public boot(): void {
+    public async boot(): Promise<void> {
     }
-    
-        
+
+
     public async get_external_ip() {
         return await axios
             .get<string>('https://api.ipify.org/')
@@ -42,7 +42,7 @@ class NetworkServiceProvider extends ServiceProvider {
     };
 
     public get_internal_ip() {
-        if (this.isWsl() && !process.env.INTERNAL_IP) {
+        if (NetworkServiceProvider.isWsl() && !process.env.INTERNAL_IP) {
             console.log('You are running the server on WSL, You must set an internal IP in your .env.');
             process.exit(0);
         }
@@ -66,14 +66,14 @@ class NetworkServiceProvider extends ServiceProvider {
 
         return result?.address ?? process.env.INTERNAL_IP;
     };
-    
-    private isWsl() {
+
+    public static isWsl() {
         if (process.platform !== 'linux') {
             return false;
         }
 
         if (os.release().toLowerCase().includes('microsoft')) {
-            if (this.isDocker()) {
+            if (NetworkServiceProvider.isDocker()) {
                 return false;
             }
 
@@ -82,13 +82,13 @@ class NetworkServiceProvider extends ServiceProvider {
 
         try {
             return readFileSync('/proc/version', 'utf8').toLowerCase().includes('microsoft')
-                ? !this.isDocker() : false;
+                ? !NetworkServiceProvider.isDocker() : false;
         } catch {
             return false;
         }
     };
-    
-    private hasDockerEnv() {
+
+    public static hasDockerEnv() {
         try {
             statSync('/.dockerenv');
             return true;
@@ -97,7 +97,7 @@ class NetworkServiceProvider extends ServiceProvider {
         }
     }
 
-    private hasDockerCGroup() {
+    public static hasDockerCGroup() {
         try {
             return readFileSync('/proc/self/cgroup', 'utf8').includes('docker');
         } catch (_) {
@@ -105,8 +105,8 @@ class NetworkServiceProvider extends ServiceProvider {
         }
     }
 
-    private isDocker() {
-        return this.hasDockerEnv() || this.hasDockerCGroup();
+    public static isDocker() {
+        return NetworkServiceProvider.hasDockerEnv() || NetworkServiceProvider.hasDockerCGroup();
     };
 
 }

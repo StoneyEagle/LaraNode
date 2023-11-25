@@ -16,7 +16,7 @@ export interface ReleaseGroup {
     'first-release-date': number;
     "primary-type-id": string;
     "primary-type": string;
-    "secondary-type-ids": []
+    "secondary-type-ids": [];
     "secondary-types": [],
     "type-id": string;
 }

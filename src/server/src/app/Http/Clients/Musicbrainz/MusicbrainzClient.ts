@@ -56,7 +56,7 @@ class MusicbrainzClient extends Connector {
     public static enqueue<T>(func: () => Promise<T>): Promise<T> {
         const queue = MusicbrainzClient.getQueue();
         const key = `${MusicbrainzClient.name}_${Math.random().toString(36).substring(3)}`;
-        
+
         return promiseRetry<T>((retry, number) => {
             queue.enqueue(async () => {
                 return {
@@ -78,13 +78,13 @@ class MusicbrainzClient extends Connector {
                 });
             });
         })
-        .then((value) => {
-            return value;
-        }, (err) => {
-            this.error(err);
-            // TODO: store error in database ${number}
-            return Promise.reject(err);
-        });
+            .then((value) => {
+                return value;
+            }, (err) => {
+                this.error(err);
+                // TODO: store error in database ${number}
+                return Promise.reject(err);
+            });
     }
 
     /**

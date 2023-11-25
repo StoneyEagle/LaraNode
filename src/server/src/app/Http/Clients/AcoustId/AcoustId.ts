@@ -8,7 +8,7 @@ import { existsSync } from "fs";
  * Represents AcoustId.
  */
 class AcoustId extends AcoustIdClientClient {
-    
+
     meta = [
         'recordings',
         'recordingids',
@@ -26,13 +26,13 @@ class AcoustId extends AcoustIdClientClient {
         super();
     }
 
-    public async generateFingerPrint(path: string): Promise<{ duration: string, fingerprint: string }> {
+    public async generateFingerPrint(path: string): Promise<{ duration: string, fingerprint: string; }> {
 
-        let fingerprint: string | undefined = undefined; 
+        let fingerprint: string | undefined = undefined;
 
         await new Promise((resolve, reject) => {
 
-            if(!existsSync(path)) {
+            if (!existsSync(path)) {
                 return reject('File does not exist');
             }
 
@@ -78,22 +78,22 @@ class AcoustId extends AcoustIdClientClient {
     };
 
     public async byTrackId(id: string): Promise<void | Result> {
-            
-            AcoustIdClientClient.info(`Getting fingerprint`);
-    
-            try {
-                const response = await this.get<FingerprintLookup>(`lookup?meta=${this.meta}`, {
-                    params: {
-                        trackid: id,
-                    },
-                });
-    
-                return response.data?.results?.[0];
-    
-            } catch (error: any) {
-                AcoustIdClientClient.error(error.response.data.error);
-            }
-        };
+
+        AcoustIdClientClient.info(`Getting fingerprint`);
+
+        try {
+            const response = await this.get<FingerprintLookup>(`lookup?meta=${this.meta}`, {
+                params: {
+                    trackid: id,
+                },
+            });
+
+            return response.data?.results?.[0];
+
+        } catch (error: any) {
+            AcoustIdClientClient.error(error.response.data.error);
+        }
+    };
 };
 
 export default AcoustId;

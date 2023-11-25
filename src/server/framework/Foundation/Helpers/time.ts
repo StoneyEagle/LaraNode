@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { pad } from './string';
 
-export const convertToHuman = function (time: string|number) {
+export const convertToHuman = function (time: string | number) {
 	time = parseInt(time as string, 10);
 	let days: unknown = parseInt(`${time / (3600 * 24)}`, 10);
 
@@ -41,7 +41,7 @@ globalThis.convertToHuman = convertToHuman;
  * Returns time in seconds in human readable format
  * @param time
  */
-export const humanTime = function (time: string|number) {
+export const humanTime = function (time: string | number) {
 	time = parseInt(time as string, 10);
 	let hours: string = pad(parseInt(`${(time % 86400) / 3600}`, 10), 2);
 
@@ -80,7 +80,7 @@ globalThis.humanTime = humanTime;
  * @return {string} current
  */
 
-export const convertToHis = function (time: string|number) {
+export const convertToHis = function (time: string | number) {
 	time = parseInt(time as string, 10);
 	let hours: string = pad(parseInt(`${(time % 86400) / 3600}`, 10), 2);
 
@@ -168,7 +168,7 @@ globalThis.fileChangedAt = fileChangedAt;
  * @param {string} notation Days, Hours (default), Minutes, Seconds.
  * @param {string} method Floor (default), Ceil, Round.
  */
-export const fileChangedAgo = function (file: string|fs.PathLike, notation = 'hours', method = 'floor') {
+export const fileChangedAgo = function (file: string | fs.PathLike, notation = 'hours', method = 'floor') {
 	let time;
 	switch (notation) {
 		case 'days':

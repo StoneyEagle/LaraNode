@@ -16,17 +16,18 @@ class ElectronServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
+    public async register(): Promise<void> {
     }
 
-    public boot(): void {
-        if(!DetectBrowsers()) return;
+    public async boot(): Promise<void> {
+        if (!DetectBrowsers()) return;
 
         this.electron = new Electron({
             icon: icon,
             open: this.open,
             title: this.title,
             tooltip: this.tooltip,
+            url: 'https://vue-dev.nomercy.tv',
         });
         globalThis.electron = this.electron;
 

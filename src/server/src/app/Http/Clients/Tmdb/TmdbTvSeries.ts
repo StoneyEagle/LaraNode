@@ -134,7 +134,7 @@ class TmdbTvShow extends TmdbClient {
      * @param page The page number to fetch.
      * @returns A promise that resolves to a paginated response of TV shows.
      */
-    protected async _recommendations({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _recommendations({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching TV Show ${this.id} Recommendations page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/recommendations`, {
@@ -162,7 +162,7 @@ class TmdbTvShow extends TmdbClient {
      * @param {number} page - The page number of the results to fetch.
      * @returns {Promise<PaginatedResponse<TvShow>>} A Promise that resolves to a paginated response of TV shows.
      */
-    protected async _similar({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _similar({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching TV Show ${this.id} Similar page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/similar`, {

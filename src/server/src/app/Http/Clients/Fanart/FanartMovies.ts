@@ -14,21 +14,21 @@ class FanartMovies extends FanartClient {
         this.url = `movies`;
     }
 
-    public async images(id: number){
+    public async images(id: number) {
         FanartClient.info(`Fetching Movie ${id} Images`);
-        
+
         const { data } = await this.get<Movie>(`${this.url}/${id}`);
-    
+
         return data;
     };
-    
-    public async latest(date = Date.now()){
+
+    public async latest(date = Date.now()) {
         FanartClient.info('Fetching Latest Movies');
-    
+
         const { data } = await this.get<MovieLatest>(`${this.url}/latest`, {
             params: { date },
         });
-    
+
         return data;
     };
 };

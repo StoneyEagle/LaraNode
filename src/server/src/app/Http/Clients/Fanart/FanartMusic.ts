@@ -14,8 +14,8 @@ class FanartMusic extends FanartClient {
 
         this.url = `music`;
     }
-        
-    public async artist(id: string){
+
+    public async artist(id: string) {
         FanartClient.info(`Fetching Music Artist ${id} Images`);
 
         const { data } = await this.get<ArtistImage>(`${this.url}/${id}`);
@@ -23,7 +23,7 @@ class FanartMusic extends FanartClient {
         return data;
     };
 
-    public async album(id: string){
+    public async album(id: string) {
         FanartClient.info(`Fetching Music Album ${id} Images`);
 
         const { data } = await this.get<AlbumImage>(`${this.url}/albums/${id}`);
@@ -31,7 +31,7 @@ class FanartMusic extends FanartClient {
         return data;
     };
 
-    public async label(id: string){
+    public async label(id: string) {
         FanartClient.info(`Fetching Music Label ${id} Images`);
 
         const { data } = await this.get<ArtistImage>(`${this.url}/labels/${id}`);
@@ -39,7 +39,7 @@ class FanartMusic extends FanartClient {
         return data;
     };
 
-    public async latest(date = Date.now()){
+    public async latest(date = Date.now()) {
         FanartClient.info('Fetching Latest Music');
 
         const { data } = await this.get<ArtistLatest>(`${this.url}/latest`, {

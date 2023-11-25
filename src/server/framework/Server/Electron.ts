@@ -1,11 +1,11 @@
-import { app, BrowserWindow, screen, shell, Tray, Menu, App, nativeImage } from "electron";
-import waitPort from "wait-port";
-        
+import { App, BrowserWindow, BrowserWindowConstructorOptions, Menu, Tray, app, nativeImage, screen, shell } from "electron";
+
 class Electron {
 
     mainWindow: BrowserWindow | undefined;
     splash: BrowserWindow | undefined;
     tray: Tray | undefined;
+    static customWindows: BrowserWindow[] = [];
 
     config: {
         host: string;
@@ -14,6 +14,7 @@ class Electron {
         open: boolean;
         title: string;
         tooltip: string;
+        url: string;
     } = {
             host: serverHost(),
             port: serverPort(),
@@ -21,15 +22,16 @@ class Electron {
             open: true,
             title: '',
             tooltip: '',
+            url: '',
         };
 
     constructor(config: Partial<Electron['config']>) {
         this.config = { ...this.config, ...config };
+
+        app.commandLine.appendSwitch('disable-web-security');
     }
 
     make(): App {
-
-        app.commandLine.appendSwitch('disable-web-security');
 
         app.setBadgeCount(10);
 
@@ -38,20 +40,23 @@ class Electron {
             this.splashWindow();
             this.trayMenu();
 
-            waitPort({
-                path: '/routes',
-                host: this.config.host.replace(/https?:\/\//, ''),
-                port: this.config.port,
-                output: 'silent',
-            })
-                .then(() => {
-                    this.splash?.close();
-                    this.createWindow();
-                })
-                .catch((error: Error) => {
-                    console.error(error);
-                });
+            setTimeout(() => {
 
+                // waitPort({
+                //     path: '/routes',
+                //     host: this.config.host.replace(/https?:\/\//, ''),
+                //     port: this.config.port,
+                //     output: 'silent',
+                // })
+                //     .then(() => {
+                this.splash?.close();
+                this.createWindow();
+                // })
+                // .catch((error: Error) => {
+                //     console.error(error);
+                // });
+
+            }, 5000);
             app.on('activate', () => {
                 if (BrowserWindow.getAllWindows().length === 0) this.createWindow();
             });
@@ -66,7 +71,7 @@ class Electron {
         return app;
     }
 
-    createWindow(): this {
+    private createWindow(): this {
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width } = primaryDisplay.workAreaSize;
 
@@ -118,12 +123,12 @@ class Electron {
             return false;
         });
 
-        this.mainWindow.loadURL(this.config.host).then();
+        this.mainWindow.loadURL(this.config.url).then();
 
         return this;
     }
 
-    splashWindow(): this {
+    private splashWindow(): this {
         this.splash = new BrowserWindow({
             width: 600,
             height: 300,
@@ -153,7 +158,7 @@ class Electron {
         return this;
     }
 
-    trayMenu(): this {
+    private trayMenu(): this {
         const trayMenu = Menu.buildFromTemplate([
             {
                 label: 'Show App',
@@ -179,6 +184,47 @@ class Electron {
         });
 
         return this;
+    }
+
+    public static custonWindow({ options, url }: { options: BrowserWindowConstructorOptions, url: string; }) {
+
+        app.commandLine.appendSwitch('disable-web-security');
+
+        const window = new BrowserWindow({
+            resizable: true,
+            maximizable: true,
+            roundedCorners: false,
+            center: true,
+            darkTheme: true,
+            kiosk: false,
+            autoHideMenuBar: true,
+            thickFrame: true,
+            titleBarStyle: 'hiddenInset',
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+                autoplayPolicy: 'no-user-gesture-required',
+                webgl: true,
+                sandbox: false,
+                webSecurity: false,
+                scrollBounce: true,
+            },
+            ...options,
+        });
+
+        window.loadURL(url).then();
+
+        Electron.customWindows.push(window);
+
+        const closeWindow = () => {
+            window.hide();
+            Electron.customWindows = Electron.customWindows.filter((w) => w !== window);
+        };
+
+        return {
+            window,
+            closeWindow
+        };
     }
 }
 

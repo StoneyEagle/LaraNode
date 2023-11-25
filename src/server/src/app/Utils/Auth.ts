@@ -1,21 +1,28 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import http from 'http';
-import crypto from 'crypto';
-import express, { Request, Response } from 'express';
-import axios from 'axios';
-import open from 'open';
-import { jwtDecode } from 'jwt-decode';
-import { input, password } from '@inquirer/prompts';
-import Logger from '@framework/Foundation/Logger';
-import DetectBrowsers from '@framework/Foundation/Helpers/detectBrowsers';
 import { configFile, tokenFile } from '../Helper/paths';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import express, { Request, Response } from 'express';
+import { input, password } from '@inquirer/prompts';
 
+import DetectBrowsers from '@framework/Foundation/Helpers/detectBrowsers';
+import Electron from '@framework/Server/Electron';
+import Logger from '@framework/Foundation/Logger';
 import type { Token } from '@framework/types/user';
+import axios from 'axios';
+import crypto from 'crypto';
+import http from 'http';
+import { jwtDecode } from 'jwt-decode';
+
+// import open from '../Helper/open';
+
+let window: {
+    window: Electron.CrossProcessExports.BrowserWindow;
+    closeWindow: () => void;
+};
 
 class Auth {
     private tempServerEnabled: boolean = false;
     private authenticated: boolean = false;
-    
+
     private baseUrl = 'https://dev.nomercy.tv';
     private authBaseUrl: string = `${this.baseUrl}/oauth/`;
     private authorizeUrl: string = `${this.authBaseUrl}authorize`;
@@ -37,7 +44,7 @@ class Auth {
     private id_token: string = '';
     private session_state: string = '';
     private scope: string = '';
-    
+
     constructor({ token_client_id, token_client_secret, password_client_id, password_client_secret }) {
 
         this.token_client_id = token_client_id;
@@ -49,12 +56,10 @@ class Auth {
         this.refresh_token = Auth.getRefreshToken();
         this.expires_in = Auth.getTokenExpiration();
         this.id_token = Auth.getIdToken();
-
-        this.refreshTokenLoop();
     }
 
-    private async refreshTokenLoop() {
-        this.refreshToken();
+    public async refreshTokenLoop() {
+        await this.refreshToken();
 
         const interval = setTimeout(async () => {
             await this.refreshTokenLoop();
@@ -63,44 +68,44 @@ class Auth {
         return interval;
     }
 
-    private async refreshToken(){
+    private async refreshToken() {
         this.info('Refreshing offline token');
-    
+
         if (!this.refresh_token) {
             console.log('No refresh token found');
 
-            if(!this.tempServerEnabled) {
-                this.tempServer(serverPort()+1);
-                this.loginByBrowser();
+            if (!this.tempServerEnabled) {
+                this.tempServer(3000);
+                await this.loginByBrowser();
             }
 
             return;
         }
-        
+
         const refreshTokenData = this.setTokenData({
             grant_type: 'refresh_token',
             refresh_token: this.refresh_token,
         });
-    
-		const response = await fetch(this.tokenUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-			body: refreshTokenData.toString(),
-		});
 
-		const data = await response.json();
+        const response = await fetch(this.tokenUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: refreshTokenData.toString(),
+        });
 
-		if (data.error) {
-			throw new Error(data.error_description);
-		}	
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error_description);
+        }
 
         this.setAuthTokens(data);
-        
+
         if (data.access_token) {
             writeFileSync(tokenFile, JSON.stringify(data));
-    
+
             this.info('Offline token refreshed');
         }
 
@@ -112,30 +117,50 @@ class Auth {
         const detected = DetectBrowsers();
 
         if (detected) {
-            return this.loginByBrowser();
+            return await this.loginByBrowser();
         } else {
-            return this.loginByPassword();
+            return await this.loginByPassword();
         }
-        
+
     };
 
     private async loginByBrowser() {
-        const redirect_uri = `${serverHost()}:${serverPort()+1}/sso-callback`;
+        const redirect_uri = `http://localhost:${3000}/sso-callback`;
 
-		return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
-			this.info('Opening browser, please login');
+            this.info('Opening browser, please login');
 
-			await open(await this.authorizeUrlString(redirect_uri), {
-				wait: true,
-			});
+            window = Electron.custonWindow({
+                options: {
+                    title: 'Login',
+                    show: false,
+                    width: 1200,
+                    height: 850,
+                    resizable: true,
+                    maximizable: true,
+                    roundedCorners: false,
+                    center: true,
+                },
+                url: await this.authorizeUrlString(redirect_uri),
+            });
 
-			setTimeout(() => {
-				resolve(true);
-			}, 1000);
-		});
+            await this.waitForLogin(resolve);
+
+        });
     }
-    
+
+    private async waitForLogin(resolve: (value: unknown) => void) {
+        setTimeout(() => {
+            if (!Auth.getAccessToken()) {
+                window.window.show();
+                return this.waitForLogin(resolve);
+            } else {
+                resolve(true);
+            }
+        }, 2000);
+    }
+
     private async loginByPassword() {
 
         return new Promise(async (resolve, reject) => {
@@ -175,8 +200,8 @@ class Auth {
                 });
         });
     };
-    
-    private loginPrompt(): Promise<{ email: string, password: string, totp: string }> {
+
+    private loginPrompt(): Promise<{ email: string, password: string, totp: string; }> {
         return new Promise(async (resolve) => {
 
             console.log('Please login to continue');
@@ -185,12 +210,12 @@ class Auth {
                 message: 'Email address'
             });
 
-            const pass = await  password({
+            const pass = await password({
                 message: 'Password: '
             });
 
             const totp = await input({
-                message: '2fa code: ', 
+                message: '2fa code: ',
                 validate: (value: string) => !value || !isNaN(parseInt(value, 10)),
             });
 
@@ -203,11 +228,11 @@ class Auth {
     };
 
     private async authorizeUrlString(redirect_uri: string) {
-   
+
         const pkce = await this.generatePKCE();
-        
+
         this.codeVerifier = pkce.codeVerifier;
-    
+
         const queryParams = this.setTokenData({
             redirect_uri: redirect_uri,
             response_type: 'code',
@@ -217,7 +242,7 @@ class Auth {
         });
 
         // console.log(this.authorizeUrl, queryParams);
-    
+
         return this.authorizeUrl + '?' + queryParams;
     }
 
@@ -225,13 +250,13 @@ class Auth {
         if (!existsSync(configFile)) {
             writeFileSync(configFile, JSON.stringify({}));
         }
-    
+
         const data = JSON.parse(readFileSync(configFile, 'utf8'));
-    
+
         data[key] = value;
-    
+
         writeFileSync(configFile, JSON.stringify(data));
-    };    
+    };
 
     private generateCodeVerifier(length: number) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
@@ -261,7 +286,7 @@ class Auth {
 
     private async generatePKCE() {
         const state = this.generateCodeVerifier(40);
-        const verifier = this.generateCodeVerifier(128);    
+        const verifier = this.generateCodeVerifier(128);
         const challenge = await this.generateCodeChallenge(verifier);
 
         return {
@@ -271,7 +296,7 @@ class Auth {
         };
     }
 
-    private makeTokenData(){
+    private makeTokenData() {
         return new URLSearchParams({
             client_id: this.token_client_id,
             client_secret: this.token_client_secret,
@@ -279,7 +304,7 @@ class Auth {
         });
     }
 
-    private setTokenData(val: {[key:string]: string}){ 
+    private setTokenData(val: { [key: string]: string; }) {
         const tokenData = this.makeTokenData();
         Object.entries(val).forEach(([key, value]) => {
             tokenData.set(key, value);
@@ -289,7 +314,7 @@ class Auth {
 
 
     private tempServer(internal_port: number) {
-	
+
         const app = express();
         const httpServer = http.createServer(app);
 
@@ -310,9 +335,9 @@ class Auth {
 
         return httpServer;
     };
-    
+
     private async callback(req: Request, res: Response) {
-        const redirect_uri = `${serverHost()}:${serverPort()+1}/sso-callback`;
+        const redirect_uri = `http://localhost:${3000}/sso-callback`;
 
         const authorizationCodeParams = this.setTokenData({
             grant_type: 'authorization_code',
@@ -320,8 +345,6 @@ class Auth {
             redirect_uri: redirect_uri,
             code_verifier: this.codeVerifier,
         });
-
-        // console.log(this.tokenUrl, authorizationCodeParams);
 
         await axios
             .post<Token>(this.tokenUrl, authorizationCodeParams.toString())
@@ -337,7 +360,7 @@ class Auth {
                     writeFileSync(tokenFile, JSON.stringify(data, null, 2));
                 }
 
-                res.send('<script>window.close();</script>').end();
+                window.closeWindow();
             })
             .catch(({ response }) => {
                 this.error(response.data);
@@ -367,19 +390,19 @@ class Auth {
 
     public static getAccessToken = (): string => {
         return JSON.parse(readFileSync(tokenFile, 'utf-8'))?.access_token as string;
-    }
+    };
 
     public static getRefreshToken = (): string => {
         return JSON.parse(readFileSync(tokenFile, 'utf-8'))?.refresh_token as string;
-    }
+    };
 
     public static getIdToken = (): string => {
         return JSON.parse(readFileSync(tokenFile, 'utf-8'))?.id_token as string;
-    }
+    };
 
     public static getTokenExpiration = (): number => {
         return JSON.parse(readFileSync(tokenFile, 'utf-8'))?.expires_in as number;
-    }
+    };
 
     private info(message: string) {
         Logger.log({

@@ -161,7 +161,7 @@ export interface RecordingAppend extends Recording {
 	relations: Relation[];
 	releases: Release[];
 	tags: Tag[];
-    genres: Genre[];
+	genres: Genre[];
 }
 
 export type RecordingWithAppends<T extends keyof RecordingAppend> = Recording & Pick<RecordingAppend, T>;

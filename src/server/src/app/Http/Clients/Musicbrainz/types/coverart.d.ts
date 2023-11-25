@@ -24,7 +24,7 @@ export interface Thumbnails {
   small: string;
 }
 
-export enum CoverType{
+export enum CoverType {
   MatrixRunout = 'Matrix/Runout',
   RawUnedited = 'Raw/Unedited',
   Back = 'Back',

@@ -9,10 +9,10 @@ interface TmdbCertificationInterface {
 }
 
 export interface CertificationList {
-	iso_3166_1: string;
-	meaning: string;
-	order: number;
-	certification: string;
+    iso_3166_1: string;
+    meaning: string;
+    order: number;
+    certification: string;
 }
 
 /**
@@ -41,13 +41,13 @@ class TmdbCertification extends TmdbClient {
 
         const movieCertifications = new TmdbCertification().movieCertifications();
         const tvCertifications = new TmdbCertification().tvCertifications();
-    
+
         await Promise.all([
             movieCertifications.then((certs) => {
                 for (let i = 0; i < Object.keys(certs).length; i++) {
                     const key = Object.keys(certs)[i];
                     const certification = certs[key];
-    
+
                     for (let j = 0; j < certification.length; j++) {
                         const cert = certification[j];
                         data.push({
@@ -63,7 +63,7 @@ class TmdbCertification extends TmdbClient {
                 for (let i = 0; i < Object.keys(certs).length; i++) {
                     const key = Object.keys(certs)[i];
                     const certification = certs[key];
-    
+
                     for (let j = 0; j < certification.length; j++) {
                         const cert = certification[j];
                         data.push({
@@ -76,17 +76,17 @@ class TmdbCertification extends TmdbClient {
                 }
             }),
         ]);
-    
+
         return data;
-    }    
-    
+    }
+
     /**
      * Retrieves the TV certifications from the TMDB API.
      * @returns A Promise that resolves to a TvCertification object.
      */
     async tvCertifications(): Promise<TvCertification> {
         TmdbClient.info(`Fetching TV Certifications`);
-        
+
         const { data } = await this.get<TvCertifications>(`${this.url}/tv/list`);
 
         return data.certifications;
@@ -98,7 +98,7 @@ class TmdbCertification extends TmdbClient {
      */
     async movieCertifications(): Promise<MovieCertification> {
         TmdbClient.info(`Fetching Movie ${this.id} Certifications`);
-        
+
         const { data } = await this.get<MovieCertifications>(`${this.url}/movie/list`);
 
         return data.certifications;

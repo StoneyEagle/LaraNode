@@ -20,7 +20,7 @@ class TmdbDiscover extends TmdbClient {
 
         this.url = 'discover';
     }
-    
+
     /**
      * Fetches a paginated list of movies based on the provided parameters.
      * @param params - The parameters to filter the movie results by.
@@ -45,7 +45,7 @@ class TmdbDiscover extends TmdbClient {
      * @param limit The maximum number of movies to return. Defaults to 10.
      * @returns A Promise that resolves to an array of `Movie` objects.
      */
-    public async movie({ params = {}, limit = 10 }: { params?: DiscoverMovieParams, limit?: number } = {}) {
+    public async movie({ params = {}, limit = 10 }: { params?: DiscoverMovieParams, limit?: number; } = {}) {
         TmdbClient.info('Fetching Discover Movie');
 
         return TmdbClient.paginatedResponse<TmdbDiscover, Movie>(this, '_movie', limit, { params });
@@ -56,7 +56,7 @@ class TmdbDiscover extends TmdbClient {
      * @param {number} page - The page number to fetch.
      * @returns {Promise<PaginatedResponse<TvShow>>} A promise that resolves to a paginated response of TV shows.
      */
-    protected async _tv({ params = {}, page = 1 }: { params?: DiscoverTvShowParams, page?: number } = {}): Promise<PaginatedResponse<TvShow>> {
+    protected async _tv({ params = {}, page = 1 }: { params?: DiscoverTvShowParams, page?: number; } = {}): Promise<PaginatedResponse<TvShow>> {
         TmdbClient.info(`Fetching Discover TV Show page ${page} with params ${JSON.stringify(params)}`);
 
         const { data } = await this.get<PaginatedResponse<TvShow>>(`${this.url}/tv`, {
@@ -74,7 +74,7 @@ class TmdbDiscover extends TmdbClient {
      * @param limit The maximum number of Tv Shows to return. Defaults to 10.
      * @returns A Promise that resolves to an array of `Tv` objects.
      */
-    public async tv({ params = {}, limit = 10 }: { params?: DiscoverTvShowParams, limit?: number }) {
+    public async tv({ params = {}, limit = 10 }: { params?: DiscoverTvShowParams, limit?: number; }) {
         TmdbClient.info('Fetching Discover TV Show');
 
         return TmdbClient.paginatedResponse<TmdbDiscover, TvShow>(this, '_tv', limit, { params });

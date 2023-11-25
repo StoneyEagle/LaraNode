@@ -25,19 +25,19 @@ class TmdbCollections extends TmdbClient {
         this.id = id;
         this.url = `collection/${id}`;
     }
-    
+
     /**
      * Fetches the collection with the specified ID, along with additional information such as content ratings, credits, external IDs, images, and translations.
      * @returns A promise that resolves to the collection data.
      */
     async collection(): Promise<CollectionWithAppends<typeof collectionAppend[number]>> {
         TmdbClient.info(`Fetching Collection with id: ${this.id},`);
-        
+
         const collectionAppend = [
-            'content_ratings', 
-            'credits', 
-            'external_ids', 
-            'images', 
+            'content_ratings',
+            'credits',
+            'external_ids',
+            'images',
             'translations'
         ] as const;
 

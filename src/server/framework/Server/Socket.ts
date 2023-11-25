@@ -86,7 +86,7 @@ class _Socket {
             level: 'info',
             name: 'socket',
             color: 'magenta',
-            message:'Socket server attached to express server'
+            message: 'Socket server attached to express server'
         });
 
         this.applyMiddlewares();
@@ -135,7 +135,7 @@ class _Socket {
             from: 'NoMercy Mediaserver',
             method: 'add',
             to: '*',
-            image: `https://cdn${process.env.ROUTE_SUFFIX ?? ''}.nomercy.tv/img/favicon.ico`,
+            image: `https://cdn-dev.nomercy.tv/img/favicon.ico`,
             created_at: Date.now(),
         });
     }

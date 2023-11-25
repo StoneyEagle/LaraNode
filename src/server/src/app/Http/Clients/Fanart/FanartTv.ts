@@ -14,7 +14,7 @@ class FanartTv extends FanartClient {
         this.url = `tv`;
     }
 
-    public async images(id: number){
+    public async images(id: number) {
         FanartClient.info(`Fetching TV Show ${id} Images`);
 
         const { data } = await this.get<Tv>(`${this.url}/${id}`);
@@ -22,7 +22,7 @@ class FanartTv extends FanartClient {
         return data;
     };
 
-    public async latest(date = Date.now()){
+    public async latest(date = Date.now()) {
         FanartClient.info('Fetching Latest TV Shows');
 
         const { data } = await this.get<TvLatest>(`${this.url}/latest`, {

@@ -27,7 +27,7 @@ class TmdbCompany extends TmdbClient {
         this.id = id;
         this.url = `company/${id}`;
     }
-    
+
     async allDetails() {
 
         const companyAppend = [

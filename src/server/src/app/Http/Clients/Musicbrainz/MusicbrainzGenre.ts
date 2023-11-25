@@ -28,7 +28,7 @@ class MusicbrainzGenre extends MusicbrainzClient {
         }
     }
 
-    private async _all({ page, limit = 100 }:{ page: number, limit?: number }) {
+    private async _all({ page, limit = 100 }: { page: number, limit?: number; }) {
         MusicbrainzClient.info(`Fetching all Music Genres page ${page} with ${limit} results per page`);
 
         const { data } = await this.get<PaginatedGenreResponse>(`${this.url}/all`, {
@@ -43,27 +43,27 @@ class MusicbrainzGenre extends MusicbrainzClient {
 
     public async all() {
         MusicbrainzClient.info('Fetching all Music Genres');
-    
+
         try {
             const arr: Genre[] = [];
 
             const data = await this._all({ page: 1 });
             arr.push(...data.genres);
-    
+
             for (let i = 2; i < Math.floor(data['genre-count'] / data.genres.length); i++) {
 
-                const data2 = await this._all({ 
+                const data2 = await this._all({
                     limit: data.genres.length,
                     page: i,
                 });
-                arr.push(...data2.genres);    
+                arr.push(...data2.genres);
             }
-    
+
             return arr;
-    
+
         } catch (error) {
             MusicbrainzClient.info('Error fetching music genres');
-    
+
             return [];
         }
     };

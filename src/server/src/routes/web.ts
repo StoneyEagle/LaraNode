@@ -69,7 +69,7 @@ Route.get('/test', async function () {
     // const confuguration = new TmdbConfiguration({
     //     language: 'nl-NL'
     // });
-    
+
     // return send({
     //     configuration: await confuguration.configuration(),
     //     languages: await confuguration.languages(),
@@ -106,7 +106,7 @@ Route.get('/test', async function () {
         ...show.aggregate_credits.crew,
     ], 'id').map((person) => person.id);
 
-    const people = await TmdbPerson.people({ 
+    const people = await TmdbPerson.people({
         people: peopleIds,
     });
 
@@ -130,9 +130,9 @@ Route.get('/test', async function () {
     });
 
     for (const season of seasons) {
-        const episodes = await TmdbEpisode.episodes({ 
-            id: show.id, 
-            season: season.season_number, 
+        const episodes = await TmdbEpisode.episodes({
+            id: show.id,
+            season: season.season_number,
             episodes: season.episodes.map((episode) => episode.episode_number),
         });
 

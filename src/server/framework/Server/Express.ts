@@ -24,7 +24,7 @@ export type Middleware = string | ((req: Request, res: Response, next: NextFunct
 
 class Express {
 
-    protected port: number = 3000;
+    protected port: number = serverPort();
     protected ip: string = '0.0.0.0';
 
     public server: http.Server | https.Server | undefined;
@@ -66,7 +66,7 @@ class Express {
         return this;
     }
 
-    make_HttpsServer({ key, cert, ca, allowHTTP1 = true }: { key: string, cert: string, ca: string, allowHTTP1: boolean }) {
+    make_HttpsServer({ key, cert, ca, allowHTTP1 = true }: { key: string, cert: string, ca: string, allowHTTP1: boolean; }) {
         const credentials = {
             key: readFileSync(key, 'utf-8'),
             cert: readFileSync(cert, 'utf-8'),
@@ -247,7 +247,7 @@ class Express {
                     }
                 });
         }
-        
+
         result.push({
             method: 'all',
             group: '',

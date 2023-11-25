@@ -6,7 +6,7 @@ class Logger {
     fileLogger: winston.transports.FileTransportInstance;
     consoleLogger: winston.transports.ConsoleTransportInstance;
 
-    myCustomLevels: { [key: string]: logLevelEnums } = {
+    myCustomLevels: { [key: string]: logLevelEnums; } = {
         error: logLevelEnums.error,
         warn: logLevelEnums.warn,
         info: logLevelEnums.info,

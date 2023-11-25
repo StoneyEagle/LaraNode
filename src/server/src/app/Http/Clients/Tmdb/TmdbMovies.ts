@@ -135,7 +135,7 @@ class TmdbMovies extends TmdbClient {
      * @param {string} language - The language to use for the response.
      * @returns {Promise<PaginatedResponse<Movie>>} - A promise that resolves to a paginated response of recommended movies.
      */
-    protected async _recommendations({ page = 1, language = i18next.language }: { page: number, language: string }): Promise<PaginatedResponse<Movie>> {
+    protected async _recommendations({ page = 1, language = i18next.language }: { page: number, language: string; }): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Movie ${this.id} Recommendations page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>(`${this.url}/recommendations`, {
@@ -239,7 +239,7 @@ class TmdbMovies extends TmdbClient {
      * @param page - The page number of the results to fetch.
      * @returns A promise that resolves to a paginated response of movies.
      */
-    protected async nowPlaying({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async nowPlaying({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Movie ${this.id} Now Playing page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>('movie/now_playing', {
@@ -270,7 +270,7 @@ class TmdbMovies extends TmdbClient {
      * @param {number} options.page - The page number to fetch.
      * @returns {Promise<PaginatedResponse<Movie>>} - A promise that resolves to a paginated response of movies.
      */
-    protected async popular({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async popular({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Movie ${this.id} Popular page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>('movie/popular', {
@@ -299,7 +299,7 @@ class TmdbMovies extends TmdbClient {
      * @param {number} page - The page number to fetch.
      * @returns {Promise<PaginatedResponse<Movie>>} A promise that resolves to a paginated response of movies.
      */
-    protected async topRated({ page = 1 }: { page?: number } = {}): Promise<PaginatedResponse<Movie>> {
+    protected async topRated({ page = 1 }: { page?: number; } = {}): Promise<PaginatedResponse<Movie>> {
         TmdbClient.info(`Fetching Movie ${this.id} Popular page ${page}`);
 
         const { data } = await this.get<PaginatedResponse<Movie>>('movie/top_rated', {

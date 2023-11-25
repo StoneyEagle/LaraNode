@@ -37,7 +37,7 @@ class Connector extends Request {
     public static enqueue<T>(func: () => Promise<T>): Promise<T> {
         const queue = Connector.getQueue();
         const key = `${Connector.name}_${Math.random().toString(36).substring(3)}`;
-        
+
         return promiseRetry(function (retry, number) {
             queue.enqueue(async () => {
                 return {
@@ -59,12 +59,12 @@ class Connector extends Request {
                 });
             });
         })
-        .then(function (value) {
-            return value as T;
-        }, function (err) {
-            return Promise.reject(err);
-            // TODO: store error in database
-        });
+            .then(function (value) {
+                return value as T;
+            }, function (err) {
+                return Promise.reject(err);
+                // TODO: store error in database
+            });
     }
 }
 

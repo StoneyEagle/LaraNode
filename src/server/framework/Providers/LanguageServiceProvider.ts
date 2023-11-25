@@ -11,7 +11,7 @@ class LanguageServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
+    public async register(): Promise<void> {
         i18next
             .use(FsBackend)
             .use(middleware.LanguageDetector)
@@ -24,7 +24,7 @@ class LanguageServiceProvider extends ServiceProvider {
         globalThis.i18next = i18next;
     }
 
-    public boot(): void {
+    public async boot(): Promise<void> {
     }
 }
 

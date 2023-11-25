@@ -13,7 +13,7 @@ class Application {
         if (this.instance) {
             throw new Error('Application instance already exists');
         }
-        
+
         process.stdout.write(colors.reset);
 
         this.instance = new _Application();
@@ -35,21 +35,26 @@ class _Application {
     public constructor() {
         const providers = config('app.providers') as unknown as string[];
 
-        providers.forEach((provider) => {
-            const Class = require(provider);
-            const instance = new Class();
+        new Promise(async (resolve) => {
 
-            instance.register();
+            for (const provider of providers) {
 
-            this[Class.name] = instance;
-        });
-
-        setTimeout(() => {
-            providers.forEach((provider) => {
                 const Class = require(provider);
-                this[Class.name].boot();
-            });
-        }, 1000);
+                const instance = new Class();
+
+                await instance.register();
+
+                this[Class.name] = instance;
+            }
+
+            setTimeout(async () => {
+                for (const provider of providers) {
+                    const Class = require(provider);
+                    await this[Class.name].boot();
+                };
+                resolve(true);
+            }, 1000);
+        });
     }
 
     restart() {
@@ -70,7 +75,6 @@ class _Application {
         });
         return this;
     }
-
 
     status() {
         return json({

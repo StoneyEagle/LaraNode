@@ -6,7 +6,7 @@ class Request extends BaseRequest {
         super();
     }
 
-    protected setHeaders(headers: { [key: string]: string|number; }): this {
+    protected setHeaders(headers: { [key: string]: string | number; }): this {
         this.withHeaders(headers);
         return this;
     }
@@ -16,12 +16,12 @@ class Request extends BaseRequest {
         return this;
     }
 
-    protected setQuery(query: { [key: string]: string|number; }): this {
+    protected setQuery(query: { [key: string]: string | number; }): this {
         this.withQuery(query);
         return this;
     }
 
-    protected setParams(params: { [key: string]: string|number|boolean|undefined }): this {
+    protected setParams(params: { [key: string]: string | number | boolean | undefined; }): this {
         this.withParams(params);
         return this;
     }

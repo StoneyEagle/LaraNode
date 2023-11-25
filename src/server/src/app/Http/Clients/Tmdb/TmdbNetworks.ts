@@ -25,7 +25,7 @@ class TmdbNetwork extends TmdbClient {
 
         this.url = `network/${id}`;
     }
-    
+
     async allDetails() {
 
         const networkAppend = [

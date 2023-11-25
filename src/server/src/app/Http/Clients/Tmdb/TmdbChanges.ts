@@ -22,7 +22,7 @@ class TmdbChanges extends TmdbClient {
     constructor({ language = i18next.language }: TmdbChangesInterface = { language: i18next.language }) {
         super({ language });
     }
-    
+
     protected async _movie(daysBack: number = 1): Promise<MovieChange[]> {
         TmdbClient.info(`Fetching Movie Changes for ${daysBack} days back`);
 
@@ -76,7 +76,7 @@ class TmdbChanges extends TmdbClient {
 
         return TmdbClient.paginatedResponse<TmdbChanges, PeopleChange>(this, '_person', daysBack);
     }
-    
+
     protected async _tv(daysBack: number = 1): Promise<TvShowChange[]> {
         TmdbClient.info(`Fetching TV Show Changes for ${daysBack} days back`);
 

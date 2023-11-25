@@ -4,10 +4,10 @@ class ServiceProvider {
     public static class: string = `${this.getFilePath()}`;
     providers: string[] = [];
 
-    public register(): void {
+    public async register(): Promise<void> {
         process
             .on('unhandledRejection', (reason: Object, p) => {
-                if(Object.values(reason)[1] == 'ERR_ABORTED' || Object.values(reason).includes('cert')) {
+                if (Object.values(reason)[1] == 'ERR_ABORTED' || Object.values(reason).includes('cert')) {
                     return;
                 }
                 console.log(reason);
@@ -28,7 +28,7 @@ class ServiceProvider {
             });
     }
 
-    public boot(): void {
+    public async boot(): Promise<void> {
     }
 
     static defaultProviders() {

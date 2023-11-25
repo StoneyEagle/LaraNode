@@ -46,7 +46,7 @@ class TmdbGenres extends TmdbClient {
             return [];
         }
     }
-    
+
     /**
      * Fetches the list of movie genres from TMDb API.
      * @param language The language to use for the genre names. Defaults to the current i18next language.
@@ -58,7 +58,7 @@ class TmdbGenres extends TmdbClient {
 
         return data.genres;
     };
-    
+
     /**
      * Fetches the list of tv genres from TMDb API.
      * @param language The language to use for the genre names. Defaults to the current i18next language.

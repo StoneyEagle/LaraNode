@@ -8,7 +8,7 @@ import { ReleaseWithAppends } from "./types/release";
 import { ReleaseGroupWithAppends } from "./types/releaseGroup";
 
 class Musicbrainz extends MusicbrainzClient {
-    
+
     constructor() {
         super();
     }
@@ -23,7 +23,7 @@ class Musicbrainz extends MusicbrainzClient {
             'release-groups',
             'works',
         ] as const;
-        
+
         const params = {
             params: {
                 inc: [
@@ -40,7 +40,7 @@ class Musicbrainz extends MusicbrainzClient {
 
         return data;
     };
-    
+
     public async recording(id: string) {
         MusicbrainzClient.info(`Fetching Recording ${id}`);
 
@@ -88,7 +88,7 @@ class Musicbrainz extends MusicbrainzClient {
             'tags',
             'genres',
         ] as const;
-    
+
         const params = {
             params: {
                 inc: [
@@ -119,18 +119,18 @@ class Musicbrainz extends MusicbrainzClient {
                 ].join('+'),
             },
         };
-    
+
         const { data } = await this.get<ReleaseWithAppends<typeof releaseAppend[number]>>(`release/${id}`, params);
-    
+
         return data;
     };
-    
+
     public async releaseCover(id: string): Promise<Image[]> {
         const { data } = await this.axios.get<Covers>(`https://coverartarchive.org/release/${id}`);
-    
+
         return data.images;
     };
-    
+
 
     public async releaseGroup(id: string) {
         MusicbrainzClient.info(`Fetching Release Group ${id}`);
@@ -142,7 +142,7 @@ class Musicbrainz extends MusicbrainzClient {
             'tags',
             'genres',
         ] as const;
-    
+
         const params = {
             params: {
                 inc: [
@@ -153,12 +153,12 @@ class Musicbrainz extends MusicbrainzClient {
                 ].join('+'),
             },
         };
-    
+
         const { data } = await this.get<ReleaseGroupWithAppends<typeof releaseAppend[number]>>(`release-group/${id}`, params);
-    
+
         return data;
     };
-    
+
     public async releaseGroupCover(id: string) {
         const { data } = await this.axios.get<Covers>(`https://coverartarchive.org/release-group/${id}`);
 

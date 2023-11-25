@@ -6,12 +6,12 @@ class NetworkServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
-        super.register();
+    public async register(): Promise<void> {
+        await super.register();
     }
 
-    public boot(): void {
-        super.boot();
+    public async boot(): Promise<void> {
+        await super.boot();
     }
 }
 

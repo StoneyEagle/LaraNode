@@ -7,10 +7,10 @@ class AuthServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
+    public async register(): Promise<void> {
     }
 
-    public boot(): void {
+    public async boot(): Promise<void> {
     }
 }
 

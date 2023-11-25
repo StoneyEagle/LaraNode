@@ -1,7 +1,5 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
 import ServiceProvider from '@framework/Providers/ServiceProvider';
-import { applicationPaths, configFile, tokenFile } from '../Helper/paths';
 import Setup from '../Utils/Setup';
 
 class AppServiceProvider extends ServiceProvider {
@@ -11,33 +9,18 @@ class AppServiceProvider extends ServiceProvider {
         super();
     }
 
-    public register(): void {
-        super.register();
-        this.createAppFolders();
-        this.setup();
+    public async register(): Promise<void> {
+        await super.register();
+        await this.setup();
     }
 
-    public boot(): void {
-        super.boot();
-    }
-    
-    private createAppFolders() {
-        for (let i = 0; i < Object.values(applicationPaths).length; i++) {
-            const path = Object.values(applicationPaths)[i];
-            mkdirSync(path, { recursive: true });
-        }
-
-        if (!existsSync(tokenFile)) {
-            writeFileSync(tokenFile, JSON.stringify({}));
-        }
-        if (!existsSync(configFile)) {
-            writeFileSync(configFile, JSON.stringify({}));
-        }
+    public async boot(): Promise<void> {
+        await super.boot();
     }
 
-    private setup() {
+    private async setup() {
         const setup = new Setup();
-        setup.init();
+        await setup.init();
     }
 }
 

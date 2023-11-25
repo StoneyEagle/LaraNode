@@ -51,7 +51,6 @@ export const applicationPaths = {
 	playlistsPath,
 	pluginConfigPath,
 	pluginsPath,
-	publicPath,
 	rootPath,
 	ScheduledTasksPath,
 	subtitlesPath,

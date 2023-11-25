@@ -111,7 +111,7 @@ export interface Work {
 }
 
 export interface ArtistAppend extends Artist {
-	recordings: Recording[];
+    recordings: Recording[];
     releases: Release[];
     'release-groups': ReleaseGroup[];
     works: Work[];
