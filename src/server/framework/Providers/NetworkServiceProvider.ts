@@ -11,19 +11,15 @@ class NetworkServiceProvider extends ServiceProvider {
 
     public constructor() {
         super();
-        globalThis.internalIp = this.get_internal_ip();
-        globalThis.externalIp = '';
-        this.get_external_ip().then((ip) => {
-            globalThis.externalIp = ip;
-        });
     }
 
     public async register(): Promise<void> {
+        globalThis.internalIp = this.get_internal_ip();
+        globalThis.externalIp = await this.get_external_ip();
     }
 
     public async boot(): Promise<void> {
     }
-
 
     public async get_external_ip() {
         return await axios

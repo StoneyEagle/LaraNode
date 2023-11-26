@@ -5,6 +5,7 @@ import Logger from "@framework/Foundation/Logger";
 import Binaries from "./Binaries";
 import Register from "./Register";
 import apiClient from "../Http/Clients/apiClient";
+import logo from "./logo";
 
 class Setup {
     downloads: Download[] = [];
@@ -26,6 +27,7 @@ class Setup {
 
                 globalThis.quote = this.quote;
                 globalThis.colors = this.colors;
+
             }).then(async () => {
 
                 process.env.OMDB_API_KEY = this.keys?.omdb_key ?? '';
@@ -43,6 +45,7 @@ class Setup {
             }).then(async () => {
                 await this.registerServer();
             }).finally(() => {
+                logo(this.quote ?? '');
                 resolve(true);
             });
         });

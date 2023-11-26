@@ -9,7 +9,7 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck": "npm run typecheck:node",
     "start": "electron-vite preview",
-    "dev": "cross-env NODE_OPTIONS=\"--max-old-space-size=8192 --no-warnings\" electron-vite dev --watch",
+    "dev": "chcp 65001 && cross-env NODE_OPTIONS=\"--max-old-space-size=8192 --no-warnings\" electron-vite dev --watch",
     "dev:native": "nodemon",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",

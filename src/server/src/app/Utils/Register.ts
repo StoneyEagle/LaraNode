@@ -55,7 +55,7 @@ class Register {
 
         Logger.log({
             level: 'info',
-            name: 'register',
+            name: 'setup',
             color: 'blueBright',
             message: 'Validating server',
         });
@@ -70,7 +70,7 @@ class Register {
                 .then(async () => {
                     Logger.log({
                         level: 'info',
-                        name: 'register',
+                        name: 'setup',
                         color: 'blueBright',
                         message: 'Server validated',
                     });
@@ -81,7 +81,7 @@ class Register {
                 .catch(({ response }) => {
                     Logger.log({
                         level: 'error',
-                        name: 'register',
+                        name: 'setup',
                         color: 'red',
                         message: JSON.stringify(response?.data ?? response, null, 2),
                     });

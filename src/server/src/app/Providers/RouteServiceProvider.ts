@@ -79,8 +79,8 @@ class RouteServiceProvider extends ServiceProvider {
 
         console.log(
             g(`╔══════════════════════════════════════════════╗\n`)
-            + g(`║ ${secure ? ' ' : ''}   ` + gb(`${secure ? 'Secure' : 'Unsecure'} server running: on port: ` + c3(`${serverPort()}`.replace(', ', '') + g(` ${secure ? ' ' : ''}   ║\n`))))
-            + g(`║  ${secure ? ' ' : ''}  ` + cc(`visit: ` + link(`https://app-dev.nomercy.tv`) + g(`     ${secure ? '' : ' '}   ║\n`))
+            + g(`║  ${secure ? ' ' : ''}  ` + gb(`${secure ? 'Secure' : 'Unsecure'} server running: on port: ` + c3(`${serverPort()}`.replace(', ', '') + g(` ${secure ? ' ' : ''}   ║\n`))))
+            + g(`║  ${secure ? ' ' : ''}  ` + cc(`visit: ` + link(`https://vue-dev.nomercy.tv`) + g(`     ${secure ? '' : ' '}   ║\n`))
                 + g(`╚══════════════════════════════════════════════╝`))
         );
 
